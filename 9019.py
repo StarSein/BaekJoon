@@ -14,24 +14,20 @@ def S(n):
 
 def L(n):
     if n >= 1000:
-        return int(str(n)[1:4] + str(n)[0])
-    elif n >= 100:
-        return int(str(n)[1:3] + str(n)[0])
-    elif n >= 10:
-        return int(str(n)[1] + str(n)[0])
+        return int("%s%s" % (str(n)[1:4], str(n)[0]))
     else:
-        return n
+        return n * 10
 
 
 def R(n):
     if n >= 1000:
-        return int(str(n)[3] + str(n)[0:3])
+        return int("%s%s" % (str(n)[3], str(n)[0:3]))
     elif n >= 100:
-        return int(str(n)[2] + str(n)[0:2])
+        return int("%s0%s" % (str(n)[2], str(n)[0:2]))
     elif n >= 10:
-        return int(str(n)[1] + str(n)[0])
+        return int("%s00%s" % (str(n)[1], str(n)[0]))
     else:
-        return n
+        return n * 1000
 
 
 T = int(sys.stdin.readline())
