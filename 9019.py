@@ -37,23 +37,40 @@ def R(n):
 T = int(sys.stdin.readline())
 for _ in range(T):
     A, B = map(int, sys.stdin.readline().split())
-    dp = [{(A, "")}]
+    dp = [[(A, "")]]
+    existing = {A}
     result = None
     while True:
-        dp.append(set())
+        dp.append([])
         for item in dp[-2]:
-            new_item = set()
-            new_item.add((D(item[0]), item[1] + 'D'))
-            new_item.add((S(item[0]), item[1] + 'S'))
-            new_item.add((L(item[0]), item[1] + 'L'))
-            new_item.add((R(item[0]), item[1] + 'R'))
-            for x in new_item:
-                if x[0] == B:
-                    result = x[1]
+            if D(item[0]) not in existing:
+                if D(item[0]) == B:
+                    result = '%sD' % item[1]
                     break
-                dp[-1].add(x)
-            if result:
-                break
+                else:
+                    dp[-1].append((D(item[0]), '%sD' % item[1]))
+                    existing.add(D(item[0]))
+            if S(item[0]) not in existing:
+                if S(item[0]) == B:
+                    result = '%sS' % item[1]
+                    break
+                else:
+                    dp[-1].append((S(item[0]), '%sS' % item[1]))
+                    existing.add((S(item[0])))
+            if L(item[0]) not in existing:
+                if L(item[0]) == B:
+                    result = '%sL' % item[1]
+                    break
+                else:
+                    dp[-1].append((L(item[0]), '%sL' % item[1]))
+                    existing.add((L(item[0])))
+            if R(item[0]) not in existing:
+                if R(item[0]) == B:
+                    result = '%sR' % item[1]
+                    break
+                else:
+                    dp[-1].append((R(item[0]), '%sR' % item[1]))
+                    existing.add((R(item[0])))
         if result:
             break
     print(result)
