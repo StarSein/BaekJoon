@@ -6,15 +6,13 @@ mod = A % C
 result = mod ** B
 if B != 1:
     i = 2
-    d_mod = {1: mod}
+    l_mod = [mod]
     while i <= B:
         mod = mod ** 2 % C
-        d_mod[i] = mod
+        l_mod.append(mod)
         i *= 2
     result = 1
-    for j in range(len(d_mod) - 1, 0, -1):
-        if 2 ** j <= B:
-            result = result * d_mod[2**j] % C
-            B -= 2 ** j
+    str_binB = str(bin(B))
+    for j in filter(lambda x: str_binB[x] == '1', range(2, len(str_binB))):
+        result = result * l_mod[len(str_binB) - 1 - j] % C
 print(result)
-
