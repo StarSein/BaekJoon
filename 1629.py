@@ -3,14 +3,18 @@ import sys
 
 A, B, C = map(int, sys.stdin.readline().split())
 mod = A % C
-set_mod = {mod}
-count = 1
-while count != B:
-    mod *= mod
-    mod %= C
-    if mod in set_mod:
-        break
-    set_mod.add(mod)
-if count != 1:
-    B = B % (B - count)
-sys.stdout.write(str((mod**B % C)))
+result = mod ** B
+if B != 1:
+    i = 2
+    d_mod = {1: mod}
+    while i <= B:
+        mod = mod ** 2 % C
+        d_mod[i] = mod
+        i *= 2
+    result = 1
+    for j in range(len(d_mod) - 1, 0, -1):
+        if 2 ** j <= B:
+            result = result * d_mod[2**j] % C
+            B -= 2 ** j
+print(result)
+
