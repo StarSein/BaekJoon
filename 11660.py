@@ -15,7 +15,6 @@ for col in range(N):
     for row in range(1, N):
         dp[col][row] = dp[col][row - 1] + dp[col][row]
 
-str_out = ""
 for req in range(M):
     x1, y1, x2, y2 = map(lambda x: int(x) - 1, sys.stdin.readline().split())
     if x1 != 0 and y1 != 0:
@@ -26,5 +25,4 @@ for req in range(M):
         result = dp[x2][y2] - dp[x1 - 1][y2]
     else:
         result = dp[x2][y2]
-    str_out = "%s\n%d" % (str_out, result)
-print(str_out.strip())
+    print(result)
