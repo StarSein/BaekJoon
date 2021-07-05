@@ -8,16 +8,19 @@ def search(k):
         for col in range(9):
             print(*matrix[col])
     else:
-        for n in filter(lambda m: m not in matrix[l_blank[k][0]], range(1, 10)):
-            for x in range(1, 10):
-                if l_blank[k] in globals()["part{}".format(x)]:
-                    if n not in [matrix[c[0]][c[1]] for c in globals()["part{}".format(x)]]:
-                        if n not in [matrix[s][l_blank[k][1]] for s in range(9)]:
-                            matrix[l_blank[k][0]][l_blank[k][1]] = n
-                            search(k + 1)
-                            if det:
-                                return 0
-                            matrix[l_blank[k][0]][l_blank[k][1]] = 0
+        for n in range(1, 10):
+            if n not in matrix[l_blank[k][0]]:
+                if n not in [matrix[s][l_blank[k][1]] for s in range(9)]:
+                    for x in range(1, 10):
+                        if l_blank[k] in globals()["part{}".format(x)]:
+                            square33 = globals()["part{}".format(x)]
+                            break
+                    if n not in [matrix[c[0]][c[1]] for c in square33]:
+                        matrix[l_blank[k][0]][l_blank[k][1]] = n
+                        search(k + 1)
+                        if det:
+                            return 0
+                        matrix[l_blank[k][0]][l_blank[k][1]] = 0
 
 
 matrix = [list(map(int, sys.stdin.readline().split())) for _ in range(9)]
