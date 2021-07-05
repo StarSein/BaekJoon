@@ -2,38 +2,34 @@ import sys
 
 
 def search(k):
-    global det
     if k == len(l_blank):
-        det = True
-        for col in range(9):
-            print(*matrix[col])
+        for c in range(9):
+            print(*matrix[c])
+        exit(0)
     else:
+        y, x = l_blank[k][0], l_blank[k][1]
         for n in range(1, 10):
-            if n not in matrix[l_blank[k][0]]:
-                if n not in [matrix[s][l_blank[k][1]] for s in range(9)]:
-                    for x in range(1, 10):
-                        if l_blank[k] in globals()["part{}".format(x)]:
-                            square33 = globals()["part{}".format(x)]
-                            break
-                    if n not in [matrix[c[0]][c[1]] for c in square33]:
-                        matrix[l_blank[k][0]][l_blank[k][1]] = n
-                        search(k + 1)
-                        if det:
-                            return 0
-                        matrix[l_blank[k][0]][l_blank[k][1]] = 0
+            if col[y][n] | row[x][n] | sqr[y // 3 + (x // 3) * 3][n]:
+                continue
+            col[y][n] = row[x][n] = sqr[y // 3 + (x // 3) * 3][n] = True
+            matrix[y][x] = n
+            search(k + 1)
+            matrix[y][x] = 0
+            col[y][n] = row[x][n] = sqr[y // 3 + (x // 3) * 3][n] = False
 
 
 matrix = [list(map(int, sys.stdin.readline().split())) for _ in range(9)]
-
-for a in range(3):
-    for b in range(3):
-        globals()["part{}".format(a + 1 + 3 * b)] = {(3 * a + c, 3 * b + r) for c in range(3) for r in range(3)}
+col = [[False] * 10 for _ in range(9)]
+row = [[False] * 10 for _ in range(9)]
+sqr = [[False] * 10 for _ in range(9)]
 
 l_blank = []
 for i in range(9):
     for j in range(9):
-        if matrix[i][j] == 0:
+        if matrix[i][j]:
+            col[i][matrix[i][j]] = True
+            row[j][matrix[i][j]] = True
+            sqr[i//3 + (j//3) * 3][matrix[i][j]] = True
+        else:
             l_blank.append((i, j))
-
-det = False
 search(0)
