@@ -2,6 +2,7 @@ import sys
 
 
 T = int(sys.stdin.readline())
+res = ""
 for case in range(T):
     N, K = map(int, sys.stdin.readline().split())
     l_D = list(map(int, sys.stdin.readline().split()))
@@ -13,31 +14,33 @@ for case in range(T):
         l_precede[Y-1].append(X-1)
     W = int(sys.stdin.readline()) - 1
 
+    buildArray = list()
     for bdg in range(N):
         if not l_precede[bdg]:
-            startBuild = bdg
-            break
-    buildArray = list()
-    buildArray.append(startBuild)
+            buildArray.append(bdg)
+
     time = 0
     while l_precede[W]:
         minBuildTime = 100000
         for bdg in buildArray:
             minBuildTime = min(minBuildTime, l_D[bdg])
         time += minBuildTime
-        temp = list()
-        l_buildComplete = list()
+        tempPush = list()
+        set_buildComplete = set()
         for bdg in buildArray:
             l_D[bdg] -= minBuildTime
             if l_D[bdg] == 0:
-                l_buildComplete.append(bdg)
+                set_buildComplete.add(bdg)
                 if l_follow[bdg]:
                     for nextBuild in l_follow[bdg]:
-                        l_precede[nextBuild].remove(l_buildComplete[-1])
+                        l_precede[nextBuild].remove(bdg)
                         if not l_precede[nextBuild]:
-                            temp.append(nextBuild)
-        for bC in l_buildComplete:
-            buildArray.remove(bC)
-        buildArray.extend(temp)
+                            tempPush.append(nextBuild)
+        tempExist = list()
+        for bdg in buildArray:
+            if bdg not in set_buildComplete:
+                tempExist.append(bdg)
+        buildArray = tempExist + tempPush
 
-    print(time + l_D[W])
+    res = "%s\n%d" % (res, time + l_D[W])
+sys.stdout.write(res.lstrip())
