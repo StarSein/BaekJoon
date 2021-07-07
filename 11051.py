@@ -2,20 +2,23 @@ import sys
 
 
 def comb(n, k):
-    upside = n
-    downside = k
-    n -= 1
-    k -= 1
-    while k:
-        u_gcd = euclid(upside, k)
-        d_gcd = euclid(downside, n)
-        upside *= n // d_gcd
-        upside //= u_gcd
-        downside *= k // u_gcd
-        downside //= d_gcd
+    if k == 0:
+        return 1
+    else:
+        upside = n
+        downside = k
         n -= 1
         k -= 1
-    return upside // downside
+        while k > 0:
+            u_gcd = euclid(upside, k)
+            d_gcd = euclid(downside, n)
+            upside *= n // d_gcd
+            upside //= u_gcd
+            downside *= k // u_gcd
+            downside //= d_gcd
+            n -= 1
+            k -= 1
+        return upside // downside
 
 
 def euclid(a, b):
