@@ -3,6 +3,9 @@ import sys
 
 def back_track(k, col, row):
     global max_move
+    if k == 26:
+        print(26)
+        exit(0)
     if k > max_move:
         max_move = k
     for t in range(4):
