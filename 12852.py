@@ -1,20 +1,23 @@
 import sys
 
 
-def divide(x):
+def operate(x):
+    l_res = []
     if x % 3 == 0:
-        return x // 3
-    elif x & 1 == 0:
-        return x >> 1
-    else:
-        return x - 1
+        l_res.append(x // 3)
+    if x & 1 == 0:
+        l_res.append(x >> 1)
+    l_res.append(x - 1)
+    return l_res
 
 
 N = int(sys.stdin.readline())
 if N == 1:
     print(0, 1, sep='\n')
 else:
-    dp = [[(divide(N), [N]), (N - 1, [N])]]
+    dp = [[]]
+    for res in operate(N):
+        dp[-1].append((res, [N]))
     det_loop = True
     while True:
         dp[-1].sort(key=lambda x: (x[0], len(x[1])))
@@ -37,5 +40,5 @@ else:
             break
         dp.append([])
         for item in dp[-2]:
-            dp[-1].append((divide(item[0]), item[1] + [item[0]]))
-            dp[-1].append((item[0] - 1, item[1] + [item[0]]))
+            for res in operate(item[0]):
+                dp[-1].append((res, item[1] + [item[0]]))
