@@ -3,20 +3,27 @@ import sys
 
 def back_track(k, col, row):
     global max_move
-    max_move = max(max_move, k)
-    for step in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-        if 0 <= col + step[0] < R and 0 <= row + step[1] < C:
-            if d_check[board[col + step[0]][row + step[1]]]:
+    if k > max_move:
+        max_move = k
+    for t in range(4):
+        newC = col + dc[t]
+        newR = row + dr[t]
+        if 0 <= newC < R and 0 <= newR < C:
+            if l_check[board[newC][newR]]:
                 continue
-            d_check[board[col + step[0]][row + step[1]]] = True
-            back_track(k + 1, col + step[0], row + step[1])
-            d_check[board[col + step[0]][row + step[1]]] = False
+            l_check[board[newC][newR]] = True
+            back_track(k + 1, newC, newR)
+            l_check[board[newC][newR]] = False
 
 
 R, C = map(int, sys.stdin.readline().split())
-board = [list(sys.stdin.readline().rstrip()) for _ in range(R)]
-d_check = {'{}'.format(chr(k)): False for k in range(65, 91)}
-d_check[board[0][0]] = True
+board = [list(map(lambda x: ord(x) - 65, sys.stdin.readline().rstrip())) for _ in range(R)]
+l_check = [False] * 26
+l_check[board[0][0]] = True
+
+dc = [-1, 0, 1, 0]
+dr = [0, -1, 0, 1]
+
 max_move = 1
 back_track(1, 0, 0)
 print(max_move)
