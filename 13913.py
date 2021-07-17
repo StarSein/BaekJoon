@@ -4,6 +4,7 @@ import sys
 N, K = map(int, sys.stdin.readline().split())
 if N >= K:
     print(N - K)
+    print(*[num for num in range(N, K - 1, -1)])
 else:
     dp0 = [(N, [N])]
     time = 1
