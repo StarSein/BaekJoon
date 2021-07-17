@@ -14,7 +14,7 @@ else:
         dp.append([])
         for item in dp[-2]:
             for new_num in [item[0] - 1, item[0] + 1, item[0] * 2]:
-                if new_num not in set_visit:
+                if new_num not in set_visit and 0 <= new_num < K * 2:
                     if new_num == K:
                         det = False
                     else:
