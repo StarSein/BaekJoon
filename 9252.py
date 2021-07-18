@@ -15,9 +15,9 @@ else:
 
     for idx in range(1, len(str1)):
         for item in dp[idx-1]:
-            if str1[idx] in str2[item[1]:]:
-                index = str2[item[1]:].index(str1[idx]) + item[1]
-                dp[idx].append((item[0] + str1[idx], index + 1))
+            for i in range(item[1], len(str2)):
+                if str2[i] == str1[idx]:
+                    dp[idx].append((item[0] + str1[idx], i + 1))
             dp[idx].append(item)
 
         dp[idx].sort(key=lambda x: (x[1], -len(x[0])))
