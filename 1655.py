@@ -3,12 +3,27 @@ import heapq
 
 if __name__ == "__main__":
     N = int(sys.stdin.readline())
-    heap = []
-    for cnt in range(1, N + 1):
-        heapq.heappush(heap, int(sys.stdin.readline()))
-        stack = []
-        for i in range((cnt + 1) // 2):
-            stack.append(heapq.heappop(heap))
-        print(stack[-1])
-        for i in range(len(stack)):
-            heapq.heappush(heap, stack.pop())
+    mid = int(sys.stdin.readline())
+    print(mid)
+    left, right = [], []
+    for i in range(1, N):
+        num = int(sys.stdin.readline())
+        if num >= mid:
+            heapq.heappush(left, num)
+        else:
+            heapq.heappush(right, (-num, num))
+        if len(left) == len(right) + 2:
+            heapq.heappush(right, (-mid, mid))
+            mid = heapq.heappop(left)
+        elif len(left) + 2 == len(right):
+            heapq.heappush(left, mid)
+            mid = heapq.heappop(right)[1]
+        else:
+            pass
+
+        if len(left) == len(right):
+            print(mid)
+        elif len(left) + 1 == len(right):
+            print(min(mid, right[0][1]))
+        else:
+            print(min(mid, left[0]))
