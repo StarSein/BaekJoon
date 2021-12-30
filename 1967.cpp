@@ -1,92 +1,77 @@
 #include <iostream>
 #include <vector>
+#include <set>
+#include <map>
 #include <queue>
 #include <stack>
-#include <set>
 #include <algorithm>
 using namespace std;
-#define pi pair<int, int>
 
-class Node {
-public:
-    int parent = 0;
-    int weight = 0;
-    int maxDistToLeaf = 0;
-    int secDistToLeaf = 0;
-
-    Node() : parent(0) {}
-};
-
-int n;
 const int ROOT_NUM = 1;
+const int MAX_N = 10000;
 int maxDiameter = 0;
-vector<Node*> v_node;
-vector<bool> v_isLeaf;
-vector<vector<int>> vv_child;
+enum KEY { PARENT, WEIGHT, MAX1_LENGTH, MAX2_LENGTH, IS_INTERNAL };
+int table[MAX_N + 1][5] = { 0 };
+map<int, vector<int>> m_child;
 stack<int> st_orderOfUpdate;
 
 void input() {
+    int n;
     cin >> n;
-    for (int i = 0; i < n + 1; i++) {
-        v_node.push_back(new Node());
-    }
-    int parentNum, childNum, weight;
-    v_isLeaf.assign(n+1, true);
-    vv_child.assign(n+1, {});
     for (int i = 0; i < n - 1; i++) {
+        int parentNum, childNum, weight;
         cin >> parentNum >> childNum >> weight;
-        v_node[childNum]->parent = parentNum;
-        v_node[childNum]->weight = weight;
-        vv_child[parentNum].push_back(childNum);
-        v_isLeaf[parentNum] = false;
+        
+        table[childNum][PARENT] = parentNum;
+        table[childNum][WEIGHT] = weight;
+        if (m_child.find(parentNum) == m_child.end()) {
+            m_child[parentNum] = {childNum};
+            table[parentNum][IS_INTERNAL] = 1;
+        } else {
+            m_child[parentNum].push_back(childNum);
+        }
     }
 }
-void makeUpdatePlan() {
+void makePlan() {
     queue<int> q_preOrder;
     q_preOrder.push(ROOT_NUM);
     while (!q_preOrder.empty()) {
-        int currentNode = q_preOrder.front();
+        int currentNum = q_preOrder.front();
         q_preOrder.pop();
-        if (v_isLeaf[currentNode])
+
+        if (!table[currentNum][IS_INTERNAL])
             continue;
-        
-        st_orderOfUpdate.push(currentNode);
-        for (int childNode : vv_child[currentNode])
-            q_preOrder.push(childNode);
+
+        st_orderOfUpdate.push(currentNum);
+        for (int childNum : m_child[currentNum])
+            q_preOrder.push(childNum);
     }
 }
-void updateMaxDistToLeaf(int nodeNum) {
-    Node* node = v_node[nodeNum];
+void updateMaxLength(int nodeNum) {
     set<int, greater<int>> s_distToLeaf;
-    int maxDistToLeaf = 0, weight = 0;
-    for (int child : vv_child[nodeNum]) {
-        maxDistToLeaf = (v_node[child]->maxDistToLeaf);
-        weight = (v_node[child]->weight);
-        s_distToLeaf.insert(maxDistToLeaf + weight);
+    for (int childNum : m_child[nodeNum]) {
+        s_distToLeaf.insert(table[childNum][WEIGHT] + table[childNum][MAX1_LENGTH]);
     }
-    
     set<int, greater<int>>::iterator iter = s_distToLeaf.begin();
-    node->maxDistToLeaf = *iter;
-    node->secDistToLeaf = *(++iter);
+    table[nodeNum][MAX1_LENGTH] = *iter;
+    table[nodeNum][MAX2_LENGTH] = *(++iter);
 }
 void updateMaxDiameter(int nodeNum) {
-    Node* node = v_node[nodeNum];
-    int maxLengthOfRoute = 0;
-    if (vv_child[nodeNum].size() == 1) {
-        maxLengthOfRoute = node->maxDistToLeaf;
-    } else {
-        maxLengthOfRoute = node->maxDistToLeaf
-                         + node->secDistToLeaf;
-    }
-    maxDiameter = max(maxDiameter, maxLengthOfRoute);
+    int currentDiameter = 0;
+    if (m_child[nodeNum].size() == 1)
+        currentDiameter = table[nodeNum][MAX1_LENGTH];
+    else
+        currentDiameter = table[nodeNum][MAX1_LENGTH]
+                        + table[nodeNum][MAX2_LENGTH];
+    maxDiameter = max(maxDiameter, currentDiameter);
 }
-void compute() {
-    makeUpdatePlan();
+void divideAndConquer() {
+    makePlan();
     while (!st_orderOfUpdate.empty()) {
-        int currentNode = st_orderOfUpdate.top();
+        int currentNum = st_orderOfUpdate.top();
         st_orderOfUpdate.pop();
-        updateMaxDistToLeaf(currentNode);
-        updateMaxDiameter(currentNode);
+        updateMaxLength(currentNum);
+        updateMaxDiameter(currentNum);
     }
 }
 void output() {
@@ -94,7 +79,7 @@ void output() {
 }
 int main() {
     input();
-    compute();
+    divideAndConquer();
     output();
     return 0;
 }
