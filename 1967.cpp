@@ -10,7 +10,7 @@ using namespace std;
 const int ROOT_NUM = 1;
 const int MAX_N = 10000;
 int maxDiameter = 0;
-enum KEY { PARENT, WEIGHT, MAX1_LENGTH, MAX2_LENGTH, IS_INTERNAL };
+enum KEY { WEIGHT, MAX1_LENGTH, MAX2_LENGTH, IS_INTERNAL };
 int table[MAX_N + 1][5] = { 0 };
 map<int, vector<int>> m_child;
 stack<int> st_orderOfUpdate;
@@ -22,7 +22,6 @@ void input() {
         int parentNum, childNum, weight;
         cin >> parentNum >> childNum >> weight;
         
-        table[childNum][PARENT] = parentNum;
         table[childNum][WEIGHT] = weight;
         if (m_child.find(parentNum) == m_child.end()) {
             m_child[parentNum] = {childNum};
@@ -48,13 +47,14 @@ void makePlan() {
     }
 }
 void updateMaxLength(int nodeNum) {
-    set<int, greater<int>> s_distToLeaf;
+    multiset<int, greater<int>> ms_distToLeaf;
     for (int childNum : m_child[nodeNum]) {
-        s_distToLeaf.insert(table[childNum][WEIGHT] + table[childNum][MAX1_LENGTH]);
+        ms_distToLeaf.insert(table[childNum][WEIGHT] + table[childNum][MAX1_LENGTH]);
     }
-    set<int, greater<int>>::iterator iter = s_distToLeaf.begin();
+    set<int, greater<int>>::iterator iter = ms_distToLeaf.begin();
     table[nodeNum][MAX1_LENGTH] = *iter;
-    table[nodeNum][MAX2_LENGTH] = *(++iter);
+    if (m_child[nodeNum].size() > 1)
+        table[nodeNum][MAX2_LENGTH] = *(++iter);
 }
 void updateMaxDiameter(int nodeNum) {
     int currentDiameter = 0;
