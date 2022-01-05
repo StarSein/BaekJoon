@@ -5,12 +5,9 @@ MAX_NUM = 10000
 
 
 def solution(cnt_list):
-    num_list = []
     for num in range(len(cnt_list)):
         for cnt in range(cnt_list[num]):
-            num_list.append(str(num))
-    sol = '\n'.join(num_list)
-    return sol
+            print(num)
 
 
 if __name__ == '__main__':
@@ -19,5 +16,4 @@ if __name__ == '__main__':
     for i in range(n):
         num = int(input())
         cnt_list[num] += 1
-    sol = solution(cnt_list)
-    print(sol)
+    solution(cnt_list)
