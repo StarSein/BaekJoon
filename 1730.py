@@ -6,14 +6,13 @@ input = sys.stdin.readline
 START_POINT = (1, 1)
 
 cmdTable = {
-    'U': [-1, 0, True],
-    'D': [1, 0, True],
-    'L': [0, -1, False],
-    'R': [0, 1, False]
+    'U': {"col": -1, "row": 0,  "isVertical": True},
+    'D': {"col": 1,  "row": 0,  "isVertical": True},
+    'L': {"col": 0,  "row": -1, "isVertical": False},
+    'R': {"col": 0,  "row": 1,  "isVertical": False}
 }
 COL = 0
 ROW = 1
-IS_VERTICAL = 2
 
 NOT_PASSED = 46
 ONLY_VERT = 124
@@ -41,11 +40,11 @@ def solution(n, movements):
     current = START_POINT
     while qMovements:
         move = qMovements.popleft()
-        next = (current[COL] + cmdTable[move][COL], current[ROW] + cmdTable[move][ROW])
+        next = (current[COL] + cmdTable[move]["col"], current[ROW] + cmdTable[move]["row"])
         if not (1 <= next[COL] <= n and 1 <= next[ROW] <= n):
             continue
 
-        isVertical = cmdTable[move][IS_VERTICAL]
+        isVertical = cmdTable[move]["isVertical"]
         matrix[current[COL]][current[ROW]] = leaveTrace(isVertical, matrix[current[COL]][current[ROW]])
         matrix[next[COL]][next[ROW]] = leaveTrace(isVertical, matrix[next[COL]][next[ROW]])
 
