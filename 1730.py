@@ -14,27 +14,28 @@ cmdTable = {
 COL = 0
 ROW = 1
 
-NOT_PASSED = 46
-ONLY_VERT = 124
-ONLY_HORIZON = 45
-BOTH_DIR = 43
+NOT_PASSED = chr(46)
+ONLY_VERT = chr(124)
+ONLY_HORIZON = chr(45)
+BOTH_DIR = chr(43)
 
 
 def leaveTrace(isVertical, currentTrace):
     if isVertical:
-        return {chr(NOT_PASSED): chr(ONLY_VERT),
-                chr(ONLY_VERT): chr(ONLY_VERT),
-                chr(ONLY_HORIZON): chr(BOTH_DIR),
-                chr(BOTH_DIR): chr(BOTH_DIR)}.get(currentTrace)
+        newTrace = {NOT_PASSED: ONLY_VERT,
+                    ONLY_VERT: ONLY_VERT,
+                    ONLY_HORIZON: BOTH_DIR,
+                    BOTH_DIR: BOTH_DIR}.get(currentTrace)
     else:
-        return {chr(NOT_PASSED): chr(ONLY_HORIZON),
-                chr(ONLY_VERT): chr(BOTH_DIR),
-                chr(ONLY_HORIZON): chr(ONLY_HORIZON),
-                chr(BOTH_DIR): chr(BOTH_DIR)}.get(currentTrace)
+        newTrace = {NOT_PASSED: ONLY_HORIZON,
+                    ONLY_VERT: BOTH_DIR,
+                    ONLY_HORIZON: ONLY_HORIZON,
+                    BOTH_DIR: BOTH_DIR}.get(currentTrace)
+    return newTrace
 
 
 def solution(n, movements):
-    matrix = [[chr(NOT_PASSED) for i in range(n+1)] for j in range(n+1)]
+    matrix = [[NOT_PASSED for i in range(n+1)] for j in range(n+1)]
     # idx : 1~n
     qMovements = deque(movements)
     current = START_POINT
