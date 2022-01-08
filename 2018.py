@@ -5,9 +5,8 @@ input = sys.stdin.readline
 
 
 def solution(n: int) -> int:
-    num_list = [num for num in range(n+1)]
     start, end = 1, 1
-    continuous_sum = sum(num_list[start:end+1])
+    continuous_sum = end
     cnt = 0
     while True:
         if continuous_sum == n:
@@ -15,9 +14,9 @@ def solution(n: int) -> int:
 
         if end < n and continuous_sum <= n:
             end += 1
-            continuous_sum += num_list[end]
+            continuous_sum += end
         elif start < end and continuous_sum > n:
-            continuous_sum -= num_list[start]
+            continuous_sum -= start
             start += 1
         else:
             return cnt
