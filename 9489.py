@@ -3,8 +3,6 @@ from typing import List
 from collections import deque
 
 input = sys.stdin.readline
-DEPTH_IDX = 0
-PARENT_IDX = 1
 
 
 def solution(n: int, k: int, num_list: List[int]) -> int:
@@ -12,8 +10,7 @@ def solution(n: int, k: int, num_list: List[int]) -> int:
     dq_parents = deque()
     tmp_parents = deque([num_list[0]])
     root_node = tmp_parents[0]
-    depth = 1
-    node_info[root_node] = (depth, 0)    # (depth, parent)
+    node_info[root_node] = 0    # parent
     num_of_separate = 1
     cnt_of_separate = 0
     latest_node = root_node
@@ -25,7 +22,6 @@ def solution(n: int, k: int, num_list: List[int]) -> int:
             cnt_of_separate += 1
 
         if cnt_of_separate == num_of_separate:
-            depth += 1
             num_of_separate = len(tmp_parents)
             cnt_of_separate = 0
             dq_parents = tmp_parents
@@ -33,20 +29,22 @@ def solution(n: int, k: int, num_list: List[int]) -> int:
         if current_node != latest_node + 1:
             parent_node = dq_parents.popleft()
 
-        node_info[current_node] = (depth, parent_node)
+        node_info[current_node] = parent_node
         tmp_parents.append(current_node)
 
         latest_node = current_node
         i += 1
 
-    print(node_info)
-
     cnt_of_sibling = 0
-    target_depth = node_info[k][DEPTH_IDX]
-    target_parent = node_info[k][PARENT_IDX]
-    for value in node_info.values():
-        if value[DEPTH_IDX] == target_depth and value[PARENT_IDX] != target_parent:
-            cnt_of_sibling += 1
+    target_parent = node_info[k]
+    if target_parent == 0:
+        return 0
+    target_grandpa = node_info[target_parent]
+    for key, val in node_info.items():
+        if val == target_grandpa:
+            for value in node_info.values():
+                if value == key and value != target_parent:
+                    cnt_of_sibling += 1
     return cnt_of_sibling
 
 
