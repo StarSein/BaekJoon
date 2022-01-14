@@ -1,6 +1,5 @@
 import sys
 from collections import deque
-from copy import deepcopy
 
 
 input = sys.stdin.readline
@@ -8,8 +7,8 @@ ROOT = 1
 
 connect_table = dict()   # key: 특정 노드, value: 해당 노드와 연결된 모든 노드
 child_parent = dict()    # key: 자식 노드, value: 부모 노드
-is_parent_set = set()    # bfs의 is_visited와 같은 역할
-												 # -> 노드 번호에 관한 정보가 없어서 리스트를 안 쓰고 집합 사용
+is_parent_set = set()    # bfs 의  is_visited 와 같은 역할 -> 노드 번호에 관한 정보가 없어서 리스트를 안 쓰고 집합 사용
+
 
 def solution():
     parent_queue = deque([ROOT])
