@@ -15,8 +15,8 @@ def solution() -> int:
 
 
 def binary_search(start: int, end: int) -> int:
-    if start == end - 1:
-        return binary_search(end, end)
+    if start > end:
+        return end
 
     mid = (start + end) // 2
     budget_sum = 0
@@ -24,15 +24,9 @@ def binary_search(start: int, end: int) -> int:
         budget_sum += min(val, mid)
 
     if budget_sum > total_budget:
-        if start == end:
-            return mid - 1
-
-        return binary_search(start, mid)
+        return binary_search(start, mid-1)
     elif budget_sum < total_budget:
-        if start == end:
-            return mid
-
-        return binary_search(mid, end)
+        return binary_search(mid+1, end)
     else:
         return mid
 
