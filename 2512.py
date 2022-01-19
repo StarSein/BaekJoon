@@ -15,13 +15,13 @@ def solution() -> int:
 
 
 def binary_search(start: int, end: int) -> int:
+    if start == end - 1:
+        return binary_search(end, end)
+
     mid = (start + end) // 2
     budget_sum = 0
     for idx, val in enumerate(budget_list):
         budget_sum += min(val, mid)
-
-    if start == end - 1:
-        return binary_search(end, end)
 
     if budget_sum > total_budget:
         if start == end:
