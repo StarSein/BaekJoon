@@ -7,22 +7,17 @@ subseq_set = set()
 
 
 def solution() -> int:
-    sum_subseq = 0
-    seq.sort()
-    backtrack(0, sum_subseq, [])
+    backtrack(0, 0, [])
     return len(subseq_set)
 
 
 def backtrack(pos: int, sum_subseq: int, subseq: List[int]):
-    if sum_subseq == s:
-        str_sub = [str(x) for x in subseq]
+    if sum_subseq == s and len(subseq) > 0:
+        str_sub = [str(v) for i, v in enumerate(subseq)]
         subseq_set.add(''.join(str_sub))
-        return
-    elif sum_subseq > s:
-        return
 
     if pos < n:
-        subseq.append(seq[pos])
+        subseq.append(pos)
         backtrack(pos + 1, sum_subseq + seq[pos], subseq)
         subseq.pop()
         backtrack(pos + 1, sum_subseq, subseq)
