@@ -1,26 +1,27 @@
 import sys
-from typing import List
+
 
 input = sys.stdin.readline
+ASCII_A = 65
 
+subseq = []
 subseq_set = set()
 
 
 def solution() -> int:
-    backtrack(0, 0, [])
+    backtrack(0, 0)
     return len(subseq_set)
 
 
-def backtrack(pos: int, sum_subseq: int, subseq: List[int]):
+def backtrack(pos: int, sum_subseq: int):
     if sum_subseq == s and len(subseq) > 0:
-        str_sub = [str(v) for i, v in enumerate(subseq)]
-        subseq_set.add(''.join(str_sub))
+        subseq_set.add(''.join(subseq))
 
     if pos < n:
-        subseq.append(pos)
-        backtrack(pos + 1, sum_subseq + seq[pos], subseq)
+        subseq.append(chr(ASCII_A + pos))
+        backtrack(pos + 1, sum_subseq + seq[pos])
         subseq.pop()
-        backtrack(pos + 1, sum_subseq, subseq)
+        backtrack(pos + 1, sum_subseq)
 
 
 if __name__ == '__main__':
