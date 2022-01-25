@@ -25,10 +25,7 @@ def solution() -> str:
             if char == '>':
                 line_up()
                 is_tag = False
-    while len(stack):
-        res.append(stack.pop())
-    while len(queue):
-        res.append(queue.pop())
+    line_up()
     return ''.join(res)
 
 
