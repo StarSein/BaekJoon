@@ -17,7 +17,9 @@ def solution():
     heapq.heapify(heap)
     while len(heap):
         dist, current = heapq.heappop(heap)
-        dists[current] = min(dists[current], dist)
+        if dists[current] == INF:
+            dists[current] = dist
+
         if not is_visited[current]:
             for idx, road in enumerate(next_roads[current]):
                 heapq.heappush(heap, (dists[current] + road[WEIGHT], road[ARRIVE]))
