@@ -15,11 +15,10 @@ def solution() -> str:
     while len(visit_queue):
         depart, arrive = visit_queue.popleft()
         if not is_visited[arrive]:
+            dists[arrive] = dists[depart] + ROAD_LEN  # x 에서 arrive 까지의 최단 거리를 저장
             for idx, city in enumerate(road_2d_list[arrive]):
                 visit_queue.append((arrive, city))
         is_visited[arrive] = True
-
-        dists[arrive] = min(dists[arrive], dists[depart] + ROAD_LEN)   # x 에서 arrive 까지의 최단 거리를 update
 
     res = []                            # x 도시로부터의 최단 거리가 정확히 k인 도시들을 담는 리스트
     for city, dist in enumerate(dists):
