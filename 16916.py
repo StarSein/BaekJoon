@@ -11,6 +11,8 @@ def solution() -> int:
             cnt += 1
             if cnt == len(p):
                 return 1
+        elif char == p[0]:
+            cnt = 1
         else:
             cnt = 0
     return 0
