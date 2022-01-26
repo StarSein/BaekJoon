@@ -3,7 +3,7 @@ from collections import deque
 
 
 input = sys.stdin.readline
-INF = 3_000_000
+INF = 200_000
 ARRIVE = 0
 WEIGHT = 1
 
@@ -20,7 +20,7 @@ def solution():
             for idx, road in enumerate(next_roads[arrive]):
                 visit_queue.append((arrive, road[ARRIVE], road[WEIGHT]))
     for i in range(1, len(dists)):
-        if dists[i] == INF:
+        if dists[i] >= INF:
             print("INF")
         else:
             print(f"{dists[i]}")
