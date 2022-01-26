@@ -18,19 +18,22 @@ def solution() -> int:
         if x == k:
             return dist
 
-        if 0 <= x-1 and dists[x-1] == INF:
-            dists[x-1] = dist + WALK_COST
-            heapq.heappush(heap, (dists[x-1], x - 1))
-        if x+1 <= MAX_X and dists[x+1] == INF:
-            dists[x+1] = dist + WALK_COST
-            heapq.heappush(heap, (dists[x+1], x + 1))
+        if 0 <= x-1:
+            if dists[x-1] > dist + WALK_COST:
+                dists[x-1] = dist + WALK_COST
+                heapq.heappush(heap, (dists[x-1], x - 1))
+        if x+1 <= MAX_X:
+            if dists[x+1] > dist + WALK_COST:
+                dists[x+1] = dist + WALK_COST
+                heapq.heappush(heap, (dists[x+1], x + 1))
         if x == 0:
             continue
 
         i = 2 * x
-        while i <= MAX_X and dists[i] == INF:
-            dists[i] = dist + WARP_COST
-            heapq.heappush(heap, (dists[i], i))
+        while i <= MAX_X:
+            if dists[i] > dist + WARP_COST:
+                dists[i] = dist + WARP_COST
+                heapq.heappush(heap, (dists[i], i))
             i *= 2
 
 
