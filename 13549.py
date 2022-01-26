@@ -10,7 +10,7 @@ WARP_COST = 0
 
 
 def solution() -> int:
-    dists = [INF] * (MAX_X + 1)
+    dists = [INF] * (2 * MAX_X + 1)
     heap = [(0, n)]
     while len(heap):
         dist, x = heapq.heappop(heap)
@@ -22,7 +22,7 @@ def solution() -> int:
             if dists[x-1] > dist + WALK_COST:
                 dists[x-1] = dist + WALK_COST
                 heapq.heappush(heap, (dists[x-1], x - 1))
-        if x+1 <= MAX_X:
+        if x+1 <= 2 * MAX_X:
             if dists[x+1] > dist + WALK_COST:
                 dists[x+1] = dist + WALK_COST
                 heapq.heappush(heap, (dists[x+1], x + 1))
@@ -30,7 +30,7 @@ def solution() -> int:
             continue
 
         i = 2 * x
-        while i <= MAX_X:
+        while i <= 2 * MAX_X:
             if dists[i] > dist + WARP_COST:
                 dists[i] = dist + WARP_COST
                 heapq.heappush(heap, (dists[i], i))
