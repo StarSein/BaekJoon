@@ -13,14 +13,14 @@ def solution():
     is_visited = [False] * (num_v + 1)
     dists[k] = 0
     is_visited[k] = True
-    heap = [(weight, k, city) for city, weight in next_roads[k]]  # (가중치, 출발 도시, 도착 도시)를 담는 힙
+    heap = [(dists[k] + weight, city) for city, weight in next_roads[k]]
     heapq.heapify(heap)
     while len(heap):
-        weight, depart, current = heapq.heappop(heap)
-        dists[current] = min(dists[current], dists[depart] + weight)
+        dist, current = heapq.heappop(heap)
+        dists[current] = min(dists[current], dist)
         if not is_visited[current]:
             for idx, road in enumerate(next_roads[current]):
-                heapq.heappush(heap, (road[WEIGHT], current, road[ARRIVE]))
+                heapq.heappush(heap, (dists[current] + road[WEIGHT], road[ARRIVE]))
             is_visited[current] = True
 
     for i in range(1, len(dists)):
@@ -33,7 +33,7 @@ def solution():
 if __name__ == '__main__':
     num_v, num_e = map(int, input().split())
     k = int(input())
-    next_roads = [[] for city in range(num_v + 1)]         # 출발도시(idx)에 대해 (도착도시, 가중치)의 리스트를 담는 리스트
+    next_roads = [[] for city in range(num_v + 1)]
     for i in range(num_e):
         u, v, e = map(int, input().split())
         next_roads[u].append((v, e))
