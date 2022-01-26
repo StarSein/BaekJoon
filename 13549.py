@@ -4,12 +4,15 @@ import heapq
 
 input = sys.stdin.readline
 MAX_X = 100_000
-INF = MAX_X
+INF = MAX_X + 1
 WALK_COST = 1
 WARP_COST = 0
 
 
 def solution() -> int:
+    if n >= k:
+        return n - k
+
     dists = [INF] * (2 * MAX_X + 1)
     heap = [(0, n)]
     while len(heap):
