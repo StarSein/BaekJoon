@@ -1,20 +1,34 @@
 import sys
+import heapq
 
 
-def floyd_warshall():
-    for k in range(1, N + 1):
-        for r in range(1, N + 1):
-            for s in range(1, N + 1):
-                graph[r][s] = min(graph[r][s], graph[r][k] + graph[k][s])
+input = sys.stdin.readline
+INF = 1e9
+INIT_COST = 0
 
 
-INF = sys.maxsize
-N = int(sys.stdin.readline())
-M = int(sys.stdin.readline())
-graph = [[INF for i in range(N + 1)] for j in range(N + 1)]
-for info in range(M):
-    departure, arrival, fare = map(int, sys.stdin.readline().split())
-    graph[departure][arrival] = fare
-floyd_warshall()
-dep, arr = map(int, sys.stdin.readline().split())
-print(graph[dep][arr])
+def solution() -> int:
+    total_cost = [INF] * (n + 1)
+    heap = []
+    heapq.heappush(heap, (INIT_COST, start))
+    while len(heap):
+        cur_cost, cur_city = heapq.heappop(heap)
+        if cur_city == end:
+            return cur_cost
+
+        if total_cost[cur_city] == INF:
+            total_cost[cur_city] = cur_cost
+            for next_city, bus_cost in bus[cur_city]:
+                heapq.heappush(heap, (cur_cost + bus_cost, next_city))
+
+
+if __name__ == '__main__':
+    n = int(input())
+    m = int(input())
+    bus = [[] for _ in range(n + 1)]
+    for i in range(m):
+        depart, arrive, cost = map(int, input().split())
+        bus[depart].append((arrive, cost))
+    start, end = map(int, input().split())
+    sol = solution()
+    print(sol)
