@@ -13,17 +13,12 @@ def solution() -> str:
     for i in range(n):
         preceders[board[i]] = set([board[j] for j in range(i)])
 
-    is_changing = [False] * (n + 1)
-    is_changed = [False] * (n + 1)
     ranks = [0] * (n + 1)
     for rank, team in enumerate(board, start=1):
         ranks[team] = rank
     while len(changes):
         teamA, teamB = changes.popleft()
-        for i in range(teamA, teamB + 1):
-            is_changing[i] = True
-        is_changed[teamA] = True
-        is_changed[teamB] = True
+
         if ranks[teamA] < ranks[teamB]:
             followers[teamA].discard(teamB)
             preceders[teamA].add(teamB)
@@ -34,9 +29,6 @@ def solution() -> str:
             preceders[teamB].add(teamA)
             followers[teamA].add(teamB)
             preceders[teamA].discard(teamB)
-    for i in range(n + 1):
-        if is_changing[i] != is_changed[i]:
-            return "?"
 
     res = []
     queue = deque([team for team in range(1, n + 1) if len(preceders[team]) == 0])
