@@ -6,7 +6,7 @@ from typing import List
 input = sys.stdin.readline
 
 
-def solution() -> List[str]:
+def solution() -> List[int]:
     dists = [0] * (n + 1)
     is_impossibles = [True] * (n + 1)
     heap = []
@@ -27,7 +27,7 @@ def solution() -> List[str]:
     res = []
     for idx, node in enumerate(candidates):
         if not is_impossibles[node]:
-            res.append(str(node))
+            res.append(node)
     return sorted(res)
 
 
@@ -43,4 +43,5 @@ if __name__ == '__main__':
             roads[b].append((a, d))
         candidates = [int(input()) for x in range(t)]
         sol = solution()
-        print(' '.join(sol))
+        for idx, val in enumerate(sol):
+            print(val, end=' ')
