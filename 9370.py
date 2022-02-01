@@ -10,9 +10,9 @@ def solution() -> List[str]:
     dists = [0] * (n + 1)
     is_ables = [False] * (n + 1)
     heap = []
-    heapq.heappush(heap, (s, 0, False))
+    heapq.heappush(heap, (0, s, False))
     while len(heap):
-        current_node, dist, is_able = heapq.heappop(heap)
+        dist, current_node, is_able = heapq.heappop(heap)
         if dists[current_node] == 0:
             dists[current_node] = dist
             is_ables[current_node] = is_able
@@ -22,7 +22,7 @@ def solution() -> List[str]:
                 if dists[next_node] == 0:
                     if (current_node == g and next_node == h) or (current_node == h and next_node == g):
                         is_able = True
-                    heapq.heappush(heap, (next_node, dist + next_dist, is_able))
+                    heapq.heappush(heap, (dist + next_dist, next_node, is_able))
     res = []
     for idx, node in enumerate(candidates):
         if is_ables[node]:
