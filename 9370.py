@@ -23,6 +23,7 @@ def solution() -> List[str]:
                     if (current_node == g and next_node == h) or (current_node == h and next_node == g):
                         is_impossible = False
                     heapq.heappush(heap, (dist + next_dist, next_node, is_impossible))
+                    is_impossible = is_impossibles[current_node]
     res = []
     for idx, node in enumerate(candidates):
         if not is_impossibles[node]:
