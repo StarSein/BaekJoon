@@ -8,24 +8,24 @@ input = sys.stdin.readline
 
 def solution() -> List[str]:
     dists = [0] * (n + 1)
-    is_ables = [False] * (n + 1)
+    is_impossibles = [True] * (n + 1)
     heap = []
-    heapq.heappush(heap, (0, s, False))
+    heapq.heappush(heap, (0, s, True))
     while len(heap):
-        dist, current_node, is_able = heapq.heappop(heap)
+        dist, current_node, is_impossible = heapq.heappop(heap)
         if dists[current_node] == 0:
             dists[current_node] = dist
-            is_ables[current_node] = is_able
+            is_impossibles[current_node] = is_impossible
             for i in range(len(roads[current_node])):
                 next_node = roads[current_node][i][0]
                 next_dist = roads[current_node][i][1]
                 if dists[next_node] == 0:
                     if (current_node == g and next_node == h) or (current_node == h and next_node == g):
-                        is_able = True
-                    heapq.heappush(heap, (dist + next_dist, next_node, is_able))
+                        is_impossible = False
+                    heapq.heappush(heap, (dist + next_dist, next_node, is_impossible))
     res = []
     for idx, node in enumerate(candidates):
-        if is_ables[node]:
+        if not is_impossibles[node]:
             res.append(str(node))
     return sorted(res)
 
