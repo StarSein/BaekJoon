@@ -1,4 +1,5 @@
 import sys
+from collections import defaultdict
 
 
 input = sys.stdin.readline
@@ -9,16 +10,15 @@ ASCII_a = 97
 class Trie:
     def __init__(self):
         self.is_terminal = False
-        self.children = [None] * NUM_CHAR
+        self.children = defaultdict(int)
 
     def insert(self, i):
         if i == len(inp_str):
             self.is_terminal = True
             return
 
-        char = inp_str[i]
-        index = char_to_idx(char)
-        if self.children[index] is None:
+        index = ord(inp_str[i]) - ASCII_a
+        if self.children[index] == 0:
             self.children[index] = Trie()
 
         self.children[index].insert(i + 1)
@@ -30,16 +30,11 @@ class Trie:
             else:
                 return False
 
-        char = inp_str[i]
-        index = char_to_idx(char)
-        if self.children[index] is None:
+        index = ord(inp_str[i]) - ASCII_a
+        if self.children[index] == 0:
             return False
 
         return self.children[index].is_exist(i + 1)
-
-
-def char_to_idx(char: chr):
-    return ord(char) - ASCII_a
 
 
 if __name__ == '__main__':
