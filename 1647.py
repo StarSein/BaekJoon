@@ -1,15 +1,14 @@
 import sys
-import heapq
 
 
 input = sys.stdin.readline
 
 
 def solution():
-    heapq.heapify(min_heap)
+    ascending_list.sort()
     mst_list = []
-    while len(min_heap):
-        cost, node_a, node_b = heapq.heappop(min_heap)
+    for idx, val in enumerate(ascending_list):
+        cost, node_a, node_b = val[0], val[1], val[2]
 
         a_root = find_root(node_a)
         b_root = find_root(node_b)
@@ -38,8 +37,8 @@ def union(a_root: int, b_root: int):
 if __name__ == '__main__':
     n, m = map(int, input().split())
     roots = [num for num in range(n + 1)]
-    min_heap = []
+    ascending_list = []
     for edge in range(m):
         a, b, c = map(int, input().split())
-        heapq.heappush(min_heap, (c, a, b))
+        ascending_list.append((c, a, b))
     solution()
