@@ -8,6 +8,7 @@ input = sys.stdin.readline
 def solution():
     max_n = int(log2(b))
     n = 1
+    f[0] = 0
     f[2**n-1] = 1
     while n < max_n:
         n += 1
@@ -19,7 +20,7 @@ def solution():
 
 
 def calc_f(x: int) -> int:
-    if f[x] != 0:
+    if f[x] != 0 or x == 0:
         return f[x]
 
     t = int(log2(x)) + 1
