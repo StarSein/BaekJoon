@@ -8,13 +8,14 @@ DEFAULT = -1
 
 
 def solution() -> int:
-    while len(is_not_calc):
-        start_node = is_not_calc.popleft()
+    dijkstra_come(x)
+    q_calc = [(-come_costs[node], node) for node in range(1, n + 1)]
+    heapq.heapify(q_calc)
+    while len(q_calc):
+        start_node = heapq.heappop(q_calc)[1]
         if go_costs[start_node] != DEFAULT:
             continue
         dijkstra_go(start_node, x)
-
-    dijkstra_come(x)
 
     best_cost = 0
     for node in range(1, n + 1):
@@ -70,7 +71,6 @@ if __name__ == '__main__':
     for edge in range(m):
         depart, arrive, t = map(int, input().split())
         connected[depart].append((t, arrive))
-    is_not_calc = deque([node for node in range(1, n + 1)])
     go_costs = [DEFAULT] * (n + 1)
     come_costs = [DEFAULT] * (n + 1)
     sol = solution()
