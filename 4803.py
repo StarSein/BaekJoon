@@ -13,12 +13,18 @@ def find_root(x: int) -> int:
 
 
 def union(a_root: int, b_root: int):
-    if a_root < b_root:
-        roots[b_root] = a_root
-        tree_set.discard(b_root)
+    high_root = max(a_root, b_root)
+    low_root = min(a_root, b_root)
+    roots[high_root] = low_root
+
+    if high_root in tree_set and low_root in tree_set:
+        tree_set.discard(high_root)
+    elif high_root in tree_set:
+        tree_set.discard(high_root)
+    elif low_root in tree_set:
+        tree_set.discard(low_root)
     else:
-        roots[a_root] = b_root
-        tree_set.discard(a_root)
+        pass
 
 
 if __name__ == '__main__':
