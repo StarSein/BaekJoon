@@ -1,14 +1,19 @@
 import sys
-import heapq
+from collections import deque
 
 
 input = sys.stdin.readline
+MIN_X = -1_000_000
 
 
 def solution() -> str:
-    heapq.heapify(min_heap)
-    while len(min_heap):
-        current_spot = heapq.heappop(min_heap)
+    spot_deque = deque(sorted(spot_list))
+    latest_x = MIN_X - 1
+    while len(spot_deque):
+        current_spot = spot_deque.popleft()
+        current_x = current_spot[0]
+        if latest_x == current_x:
+            return "NO"
 
         is_right = current_spot[1]
         if not is_right:
@@ -21,16 +26,18 @@ def solution() -> str:
             else:
                 circle_stack.pop()
 
+        latest_x = current_x
+
     return "YES"
 
 
 if __name__ == '__main__':
     n = int(input())
-    min_heap = []
+    spot_list = []
     circle_stack = []
     for circle in range(n):
         x, r = map(int, input().split())
-        min_heap.append((x - r, False, x + r))
-        min_heap.append((x + r, True))
+        spot_list.append((x - r, False, x + r))
+        spot_list.append((x + r, True))
     sol = solution()
     print(sol)
