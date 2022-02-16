@@ -33,7 +33,10 @@ def solution() -> str:
                         tmp_val *= 3
                 tmp_val += stored_val
 
-    res = str(tmp_val)
+    if len(stack):
+        return '0'
+    else:
+        res = str(tmp_val)
     return res
 
 
