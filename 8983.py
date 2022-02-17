@@ -12,7 +12,6 @@ def solution() -> str:
         tx, ty = target
         px = binary_search(tx)
         if is_in_range(tx, ty, px):
-            print(tx, ty, px)
             cnt_catch += 1
 
     return f'{cnt_catch}'
@@ -20,8 +19,8 @@ def solution() -> str:
 
 def binary_search(target_x: int) -> int:
     start, end = 0, m - 1
-    while start < end - 1:
-        mid = start + (end - start + 1) // 2
+    while start <= end:
+        mid = start + (end - start) // 2
         if target_x > pad_list[mid]:
             start = mid + 1
         elif target_x < pad_list[mid]:
@@ -29,10 +28,15 @@ def binary_search(target_x: int) -> int:
         else:
             return pad_list[mid]
 
-    if abs(target_x - pad_list[start]) < abs(target_x - pad_list[end]):
-        return pad_list[start]
-    else:
-        return pad_list[end]
+    candidates = []
+    for dx in [-1, 0, 1]:
+        cdd = mid + dx
+        if 0 <= cdd < m:
+            candidates.append((abs(target_x - pad_list[cdd]), cdd))
+    candidates.sort()
+    return pad_list[candidates[0][1]]
+
+
 
 
 def is_in_range(tx: int, ty: int, px: int) -> bool:
