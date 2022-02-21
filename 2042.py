@@ -22,10 +22,10 @@ def main():
     for query in range(m + k):
         a, b, c = map(int, input().split())
         if a == 1:
-            change = c - num_list[b-1]
+            change = c - get_interval_sum(b, b, bin_idx_tree)
             update_bi_tree(b, change, n, bin_idx_tree)
         elif a == 2:
-            print_interval_sum(b, c, bin_idx_tree)
+            print(get_interval_sum(b, c, bin_idx_tree))
         else:
             pass
 
@@ -37,7 +37,7 @@ def update_bi_tree(b: int, change: int, n: int, bin_idx_tree: List[int]):
         idx += (idx & -idx)
 
 
-def print_interval_sum(b: int, c: int, bin_idx_tree: List[int]):
+def get_interval_sum(b: int, c: int, bin_idx_tree: List[int]) -> int:
     prefix_sum_c = 0
     idx = c
     while idx:
@@ -51,7 +51,7 @@ def print_interval_sum(b: int, c: int, bin_idx_tree: List[int]):
         idx -= (idx & -idx)
 
     interval_sum = prefix_sum_c - prefix_sum_b
-    print(f'{interval_sum}')
+    return interval_sum
 
 
 if __name__ == '__main__':
