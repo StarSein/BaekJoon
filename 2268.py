@@ -12,7 +12,7 @@ def main():
     for idx in range(m):
         opr = list(map(int, input().split()))
         if opr[0] == 0:
-            i, j = opr[1], opr[2]
+            i, j = sorted(opr[1:])
             print(query(i, j, fenwick_tree))
         elif opr[0] == 1:
             i, k = opr[1], opr[2]
