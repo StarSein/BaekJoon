@@ -19,14 +19,18 @@ def binary_search(n: int, m: int, b: int, site: List[List[int]]) -> Tuple[int, i
 
     best_time = INF
     best_height = -1
-    for height in range(min_height, max_height + 1):
-        current_time = total_time(height, n, m, b, site)
+    start, end = min_height, max_height
+    while start <= end:
+        mid = start + (end - start) // 2
+        current_time = total_time(mid, n, m, b, site)
         if current_time == INF:
-            break
+            end = mid - 1
+        else:
+            start = mid + 1
 
         if current_time <= best_time:
             best_time = current_time
-            best_height = height
+            best_height = mid
 
     return best_time, best_height
 
