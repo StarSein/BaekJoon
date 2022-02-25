@@ -1,7 +1,4 @@
 import sys
-import heapq
-
-ENTRANCE = 0
 
 
 def input():
@@ -9,41 +6,53 @@ def input():
 
 
 def main():
-    def mst_prim(start: int) -> int:
-        heap = [(0, start)]
-        is_visited = [False] * (n + 1)
-        total_cost = 0
-        while len(heap):
-            weight, current_node = heapq.heappop(heap)
-
-            if is_visited[current_node]:
-                continue
-            total_cost += weight
-            is_visited[current_node] = True
-
-            for next_node, next_weight in connected[current_node]:
-                if not is_visited[next_node]:
-                    heapq.heappush(heap, (next_weight, next_node))
-
-        return total_cost
-
     n, m = map(int, input().split())
-    connected = [[] for node in range(n + 1)]
+    ascend_list = []
     for road in range(m + 1):
         a, b, c = map(int, input().split())
-        connected[a].append([b, 1 - c])
-        connected[b].append([a, 1 - c])
+        ascend_list.append((c, a, b))
+    ascend_list.sort()
+    descend_list = ascend_list[:]
+    descend_list.reverse()
 
-    min_fatigue = mst_prim(ENTRANCE) ** 2
+    roots = [node for node in range(n + 1)]
+    min_fatigue = mst_kruskal(descend_list, roots) ** 2
 
-    for node in range(n + 1):
-        for idx in range(len(connected[node])):
-            connected[node][idx][1] = 1 - connected[node][idx][1]
-
-    max_fatigue = (n - mst_prim(ENTRANCE)) ** 2
+    roots = [node for node in range(n + 1)]
+    max_fatigue = mst_kruskal(ascend_list, roots) ** 2
 
     res = max_fatigue - min_fatigue
     print(res)
+
+
+def mst_kruskal(sorted_list: list, roots: list) -> int:
+    total_cost = 0
+    for weight, node_a, node_b in sorted_list:
+        if find_root(node_a, roots) == find_root(node_b, roots):
+            continue
+
+        if weight == 0:
+            total_cost += 1
+        union(node_a, node_b, roots)
+    return total_cost
+
+
+def find_root(x: int, roots: list) -> int:
+    if roots[x] == x:
+        return x
+
+    roots[x] = find_root(roots[x], roots)
+    return roots[x]
+
+
+def union(a: int, b: int, roots: list):
+    root_a = find_root(a, roots)
+    root_b = find_root(b, roots)
+
+    if root_a > root_b:
+        root_a, root_b = root_b, root_a
+
+    roots[root_b] = root_a
 
 
 if __name__ == '__main__':
