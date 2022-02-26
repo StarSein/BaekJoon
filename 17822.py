@@ -12,7 +12,11 @@ def main():
         for col in range(n):
             total_sum += sum(circles[col])
             cnt_zero += circles[col].count(0)
-        return total_sum / (n * m - cnt_zero)
+        cnt_nonzero = n * m - cnt_zero
+        if cnt_nonzero:
+            return total_sum / cnt_nonzero
+        else:
+            return 0
 
     n, m, t = map(int, input().split())
     circles = [list(map(int, input().split())) for col in range(n)]
@@ -43,6 +47,9 @@ def main():
                 circles[col][row] = 0
         else:
             avr = get_avr()
+            if avr == 0:
+                break
+
             for col in range(n):
                 for row in range(m):
                     if circles[col][row] > avr:
