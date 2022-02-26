@@ -11,11 +11,11 @@ def main():
             return True
 
         is_visited[current_node] = True
-
         for next_node in connected[current_node]:
             if not is_visited[next_node]:
                 if dfs(next_node, depth + 1):
                     return True
+        is_visited[current_node] = False
         return False
 
     n, m = map(int, input().split())
@@ -27,12 +27,13 @@ def main():
 
     is_visited = [False] * n
     for node in range(n):
-        if len(connected[node]) == 1 and not is_visited[node]:
+        if len(connected[node]):
             if dfs(node, 0):
-                print(1)
+                res = 1
                 break
     else:
-        print(0)
+        res = 0
+    print(res)
 
 
 if __name__ == '__main__':
