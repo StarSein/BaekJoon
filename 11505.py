@@ -10,51 +10,54 @@ def input():
 
 
 def main():
-    def make_tree(node, s, e):
-        if s == e:
-            tree[node] = num_list[s-1]
-            return
+    def make_tree():
+        t = size
+        for idx in range(t):
+            tree[t + idx] = num_list[idx]
+        while t >= 2:
+            t //= 2
+            for idx in range(t, 2 * t):
+                tree[idx] = tree[2*idx] * tree[2*idx+1] % DIV
 
-        mid = s + (e - s) // 2
-        make_tree(2*node, s, mid)
-        make_tree(2*node+1, mid+1, e)
 
-        tree[node] = tree[2*node] * tree[2*node+1]
+    def update(x, v):
+        node = x + size - 1
+        tree[node] = v
 
-    def update(x, v, node, s, e):
-        if s == e:
-            tree[node] = v
-            return
+        node //= 2
+        while node >= 1:
+            tree[node] = tree[2*node] * tree[2*node+1] % DIV
+            node //= 2
 
-        mid = s + (e - s) // 2
-        if x <= mid:
-            update(x, v, 2*node, s, mid)
-        else:
-            update(x, v, 2*node+1, mid+1, e)
-        tree[node] = tree[2*node] * tree[2*node+1] % DIV
-
-    def query(l, r, node, s, e):
-        if r < s or l > e:
-            return 1
-        elif l <= s and e <= r:
-            return tree[node]
-
-        mid = s + (e - s) // 2
-        return query(l, r, 2*node, s, mid) * query(l, r, 2*node+1, mid+1, e) % DIV
+    def query(l, r):
+        l_idx = l + size - 1
+        r_idx = r + size - 1
+        res = 1
+        while l_idx <= r_idx:
+            if l_idx % 2 == 1:
+                res *= tree[l_idx]
+                l_idx += 1
+            if r_idx % 2 == 0:
+                res *= tree[r_idx]
+                r_idx -= 1
+            res %= DIV
+            l_idx //= 2
+            r_idx //= 2
+        return res
 
     n, m, k = map(int, input().split())
     num_list = [int(input()) for num in range(n)]
     size = 1 << ceil(log2(n))
     num_list.extend([1] * (size - n))
-    tree = [0] * (2 * size)
-    make_tree(1, 1, size)
+    tree = [1] * (2 * size)
+    make_tree()
 
     for command in range(m + k):
         a, b, c = map(int, input().split())
         if a == 1:
-            update(b, c, 1, 1, size)
+            update(b, c)
         else:
-            print(query(b, c, 1, 1, size))
+            print(query(b, c))
 
 
 main()
