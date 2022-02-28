@@ -45,6 +45,10 @@ def main():
             connected[u][v] = p
         recent_list = [NONE] * n
         best_route = dijkstra(s, d)
+        if best_route == -1:
+            print(best_route)
+            continue
+            
         erase_short_path()
         while True:
             recent_list = [NONE] * n
