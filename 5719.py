@@ -14,6 +14,7 @@ def input():
 def main():
     def dijkstra(start: int, end: int):
         heap = [(0, NONE, start)]
+        is_visited = [False] * n
         min_route = [INF] * n
         while len(heap):
             current_cost, recent_node, current_node = heapq.heappop(heap)
@@ -26,6 +27,9 @@ def main():
             min_route[current_node] = current_cost
             recent_list[current_node].add(recent_node)
 
+            if is_visited[current_node]:
+                continue
+            is_visited[current_node] = True
             for next_node, weight in connected[current_node].items():
                 if min_route[next_node] == INF:
                     heapq.heappush(heap, (current_cost + weight, current_node, next_node))
