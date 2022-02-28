@@ -40,13 +40,17 @@ def main():
         res = INF
         while l_idx <= r_idx:
             if l_idx % 2 == 1:
-                if num_list[seg_tree[l_idx]] <= curr_min:
+                if num_list[seg_tree[l_idx]] < curr_min:
                     curr_min = num_list[seg_tree[l_idx]]
+                    res = seg_tree[l_idx]
+                elif num_list[seg_tree[l_idx]] == curr_min:
                     res = min(res, seg_tree[l_idx])
                 l_idx += 1
             if r_idx % 2 == 0:
-                if num_list[seg_tree[r_idx]] <= curr_min:
+                if num_list[seg_tree[r_idx]] < curr_min:
                     curr_min = num_list[seg_tree[r_idx]]
+                    res = seg_tree[r_idx]
+                elif num_list[seg_tree[r_idx]] == curr_min:
                     res = min(res, seg_tree[r_idx])
                 r_idx -= 1
             l_idx >>= 1
