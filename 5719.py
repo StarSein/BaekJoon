@@ -27,7 +27,8 @@ def main():
             recent_list[current_node].add(recent_node)
 
             for next_node, weight in connected[current_node].items():
-                heapq.heappush(heap, (current_cost + weight, current_node, next_node))
+                if min_route[next_node] == INF:
+                    heapq.heappush(heap, (current_cost + weight, current_node, next_node))
         if min_route[end] == INF:
             return -1
         else:
@@ -41,8 +42,9 @@ def main():
             if current_node == s:
                 continue
 
-            for recent_node in recent_list[current_node]:
+            for recent_node in recent_list[current_node].copy():
                 connected[recent_node].pop(current_node)
+                recent_list[current_node].discard(recent_node)
                 queue.append(recent_node)
 
     while True:
