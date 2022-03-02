@@ -20,7 +20,7 @@ def main():
 
     def det_contain(current_node: int):
         if dp[current_node][0] >= dp[current_node][1]:
-            contained_set.add(str(current_node))
+            contained_set.add(current_node)
             for child in connected[current_node]:
                 for grand_child in connected[child]:
                     det_contain(grand_child)
@@ -45,7 +45,7 @@ def main():
     print(max(dp[ROOT]))
     contained_set = set()
     det_contain(ROOT)
-    print(' '.join(sorted(list(contained_set))))
+    print(*sorted(list(contained_set)))
 
 
 if __name__ == '__main__':
