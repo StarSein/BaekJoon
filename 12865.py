@@ -1,32 +1,26 @@
 import sys
 
 
-N, K = map(int, sys.stdin.readline().split())
-stuff = [(0, 0)]
-for _ in range(N):
-    W, V = map(int, sys.stdin.readline().split())
-    stuff.append((W, V))
-dp = [[] for _ in range(N+1)]
-for idx in range(1, N+1):
-    if len(dp[idx-1]) != 0:
-        for item in dp[idx-1]:
-            if item[0] + stuff[idx][0] <= K:
-                dp[idx].append((item[0] + stuff[idx][0], item[1] + stuff[idx][1]))
-            dp[idx].append(item)
-    if stuff[idx][0] <= K:
-        dp[idx].append(stuff[idx])
-    if len(dp[idx]) != 0:
-        dp[idx].sort(key= lambda x: (-x[1], x[0]))
-        useful = [dp[idx][0]]
-        val = dp[idx][0][1]
-        for item_ in dp[idx]:
-            if item_[1] != val:
-                useful.append(item_)
-                val = item_[1]
-        dp[idx] = useful
+def input():
+    return sys.stdin.readline().rstrip()
 
-max_val = 0
-for case in dp[N]:
-    if case[1] > max_val:
-        max_val = case[1]
-print(max_val)
+
+def main():
+    W = 0
+    V = 1
+    n, k = map(int, input().split())
+    stuff = [(0, 0)]
+    for inp in range(n):
+        stuff.append(tuple(map(int, input().split())))
+    dp = [[0 for row in range(k + 1)] for col in range(n + 1)]
+    for cur in range(1, n + 1):
+        for weight_limit in range(1, k + 1):
+            if stuff[cur][W] <= weight_limit:
+                dp[cur][weight_limit] = max(dp[cur-1][weight_limit], dp[cur-1][weight_limit - stuff[cur][W]] + stuff[cur][V])
+            else:
+                dp[cur][weight_limit] = dp[cur-1][weight_limit]
+    print(dp[n][k])
+
+
+if __name__ == '__main__':
+    main()
