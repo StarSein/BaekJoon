@@ -12,22 +12,30 @@ def main():
         visited_stack = []
         visited_set = set()
 
+        flag = False
         curr_node = start_node
         while curr_node not in visited_set:
             visited_stack.append(curr_node)
             visited_set.add(curr_node)
             curr_node = choice_list[curr_node-1]
-        cycle_end = curr_node
-
-        while True:
-            curr_node = visited_stack.pop()
-            is_contained[curr_node] = True
-            if curr_node == cycle_end:
+            if is_contained[curr_node] != NOT_CHECKED:
+                flag = True
                 break
+        if flag:
+            for node in visited_stack:
+                is_contained[node] = False
+        else:
+            cycle_end = curr_node
 
-        while len(visited_stack):
-            curr_node = visited_stack.pop()
-            is_contained[curr_node] = False
+            while True:
+                curr_node = visited_stack.pop()
+                is_contained[curr_node] = True
+                if curr_node == cycle_end:
+                    break
+
+            while len(visited_stack):
+                curr_node = visited_stack.pop()
+                is_contained[curr_node] = False
 
     t = int(input())
     for tc in range(t):
