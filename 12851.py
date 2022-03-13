@@ -1,6 +1,8 @@
 import sys
 import heapq
+from collections import defaultdict
 from typing import Tuple
+
 
 def input():
     return sys.stdin.readline().rstrip()
@@ -8,32 +10,32 @@ def input():
 
 def dijkstra(start: int, end: int) -> Tuple[int, int]:
     heap = [(0, start)]
-    visited_set = set()
-    is_found = False
+    min_time_dict = defaultdict(lambda: -1)
+    cnt = 0
     while len(heap):
         total_time, curr_node = heapq.heappop(heap)
 
         if curr_node == end:
-            if not is_found:
-                is_found = True
-                min_time = total_time
+            if min_time_dict[end] == -1:
+                min_time_dict[end] = total_time
                 cnt = 1
-            elif total_time == min_time:
+            elif min_time_dict[end] == total_time:
                 cnt += 1
             else:
                 break
+        else:
+            if min_time_dict[curr_node] == -1:
+                min_time_dict[curr_node] = total_time
+            elif min_time_dict[curr_node] < total_time:
+                continue
 
-        if curr_node in visited_set:
-            continue
-
-        visited_set.add(curr_node)
         if curr_node < end:
             heapq.heappush(heap, (total_time + 1, curr_node + 1))
             heapq.heappush(heap, (total_time + 1, curr_node * 2))
         if curr_node > 1:
             heapq.heappush(heap, (total_time + 1, curr_node - 1))
 
-    return min_time, cnt
+    return min_time_dict[end], cnt
 
 
 def main():
