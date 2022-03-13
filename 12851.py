@@ -1,5 +1,5 @@
 import sys
-import heapq
+from collections import deque
 from collections import defaultdict
 from typing import Tuple
 
@@ -8,12 +8,12 @@ def input():
     return sys.stdin.readline().rstrip()
 
 
-def dijkstra(start: int, end: int) -> Tuple[int, int]:
-    heap = [(0, start)]
+def bfs(start: int, end: int) -> Tuple[int, int]:
+    visit_deque = deque([(0, start)])
     min_time_dict = defaultdict(lambda: -1)
     cnt = 0
-    while len(heap):
-        total_time, curr_node = heapq.heappop(heap)
+    while len(visit_deque):
+        total_time, curr_node = visit_deque.popleft()
 
         if curr_node == end:
             if min_time_dict[end] == -1:
@@ -30,10 +30,10 @@ def dijkstra(start: int, end: int) -> Tuple[int, int]:
                 continue
 
         if curr_node < end:
-            heapq.heappush(heap, (total_time + 1, curr_node + 1))
-            heapq.heappush(heap, (total_time + 1, curr_node * 2))
+            visit_deque.append((total_time + 1, curr_node + 1))
+            visit_deque.append((total_time + 1, curr_node * 2))
         if curr_node > 1:
-            heapq.heappush(heap, (total_time + 1, curr_node - 1))
+            visit_deque.append((total_time + 1, curr_node - 1))
 
     return min_time_dict[end], cnt
 
@@ -41,7 +41,7 @@ def dijkstra(start: int, end: int) -> Tuple[int, int]:
 def main():
     n, k = map(int, input().split())
     if n < k:
-        answer = dijkstra(n, k)
+        answer = bfs(n, k)
     else:
         answer = (n - k, 1)
     print(answer[0], answer[1], sep='\n')
