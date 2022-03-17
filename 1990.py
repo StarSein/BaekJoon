@@ -1,4 +1,5 @@
 import sys
+from math import sqrt
 
 
 def input():
@@ -6,33 +7,35 @@ def input():
 
 
 def main():
-    def find_prime_numbers(min_num: int, max_num: int):
-        is_prime = [True] * (max_num + 1)
-        for num in range(2, max_num // 2 + 1):
-            if is_prime[num]:
-                next_num = num * 2
-                while next_num <= max_num:
-                    is_prime[next_num] = False
-                    next_num += num
-        for num in range(min_num, max_num + 1):
-            if is_prime[num]:
-                prime_numbers.append(str(num))
+    def make_palindromes(length: int, pos: int):
+        if pos == length // 2 + 1:
+            palindromes.add(int(''.join(num)))
+            return
 
-    def is_palindrome(s: str) -> bool:
-        i = 0
-        while i < len(s) // 2:
-            if s[i] != s[-i-1]:
+        min_digit = 1 if pos == 0 else 0
+        for digit in range(min_digit, 10):
+            num[pos] = num[-pos-1] = str(digit)
+            make_palindromes(length, pos + 1)
+
+    def is_prime(n: int) -> bool:
+        for div in range(2, int(sqrt(n)) + 1):
+            if n % div == 0:
                 return False
-            i += 1
         return True
 
     a, b = map(int, input().split())
-    prime_numbers = []
-    find_prime_numbers(a, b)
-    for prime in prime_numbers:
-        if is_palindrome(prime):
-            print(prime)
-    print("-1")
+    palindromes = set()
+    for cnt_digit in range(1, 8):
+        num = ['0'] * cnt_digit
+        make_palindromes(cnt_digit, 0)
+    answer_list = []
+    for num in palindromes:
+        if a <= num <= b and is_prime(num):
+            answer_list.append(num)
+    answer_list.sort()
+    for num in answer_list:
+        print(num)
+    print(-1)
 
 
 if __name__ == '__main__':
