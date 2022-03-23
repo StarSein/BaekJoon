@@ -1,5 +1,5 @@
 import sys
-from itertools import permutations, combinations
+from itertools import permutations
 
 
 def input():
@@ -11,25 +11,19 @@ def main():
     x_list = list(map(int, input().split()))
     p, q = map(int, input().split())
 
-    mult_pos_list = list(combinations(range(1, n), q))
     max_res = 0
     for seq in permutations(x_list, n):
-        for mult_pos in mult_pos_list:
-            pos_set = set(mult_pos)
-            curr_sum = seq[0]
-            sum_list = []
-            for pos in range(1, n):
-                if pos in pos_set:
-                    sum_list.append(curr_sum)
-                    curr_sum = 0
-                curr_sum += seq[pos]
-            sum_list.append(curr_sum)
+        sum_list = [0] * (q + 1)
 
-            curr_res = 1
-            for s in sum_list:
-                curr_res *= s
+        for num in seq:
+            pos = sum_list.index(min(sum_list))
+            sum_list[pos] += num
 
-            max_res = max(max_res, curr_res)
+        curr_res = sum_list[0]
+        for i in range(1, q + 1):
+            curr_res *= sum_list[i]
+
+        max_res = max(max_res, curr_res)
 
     print(max_res)
 
