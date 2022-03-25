@@ -1,5 +1,4 @@
 import sys
-import heapq
 from collections import defaultdict
 
 
@@ -11,34 +10,36 @@ def main():
     xs, ys = map(int, input().split())
     xe, ye = map(int, input().split())
     teleports = dict()
-    for teleport in range(3):
+    NUM_TP = 3
+    TP_COST = 10
+    for teleport in range(NUM_TP):
         x1, y1, x2, y2 = map(int, input().split())
         teleports[(x1, y1)] = (x2, y2)
         teleports[(x2, y2)] = (x1, y1)
 
-    def dijkstra(xs, ys, xe, ye) -> int:
-        dx = [0, 1, 0, -1]
-        dy = [1, 0, -1, 0]
-        heap = [(0, xs, ys)]
-        is_visited = defaultdict(bool)
-        while heap:
-            curr_time, cx, cy = heapq.heappop(heap)
-            if is_visited[(cx, cy)]:
-                continue
+    res_list = []
+    is_used = defaultdict(bool)
 
-            if cx == xe and cy == ye:
-                return curr_time
+    def backtrack(x: int, y: int, time: int):
+        if x == xe and y == ye:
+            res_list.append(time)
+            return
 
-            is_visited[(cx, cy)] = True
-            for i in range(4):
-                nx, ny = cx + dx[i], cy + dy[i]
-                if nx >= 0 and ny >= 0:
-                    heapq.heappush(heap, (curr_time + 1, nx, ny))
-            if (cx, cy) in teleports:
-                nx, ny = teleports[(cx, cy)]
-                heapq.heappush(heap, (curr_time + 10, nx, ny))
+        next_time = time + abs(xe - x) + abs(ye - y)
+        backtrack(xe, ye, next_time)
 
-    print(dijkstra(xs, ys, xe, ye))
+        for xt, yt in teleports.keys():
+            if not is_used[(xt, yt)]:
+                xnt, ynt = teleports[(xt, yt)]
+                is_used[(xt, yt)] = True
+                is_used[(xnt, ynt)] = True
+                next_time = time + TP_COST + abs(xt - x) + abs(yt - y)
+                backtrack(xnt, ynt, next_time)
+                is_used[(xt, yt)] = False
+                is_used[(xnt, ynt)] = False
+
+    backtrack(xs, ys, 0)
+    print(min(res_list))
 
 
 if __name__ == '__main__':
