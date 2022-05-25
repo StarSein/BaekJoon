@@ -6,35 +6,32 @@
 using namespace std;
 
 const int MAX_N = 900;
-bool flag = false;
 int k, n, f;
-vector<vector<int>> graph(MAX_N + 1, vector<int>());
+vector<vector<bool>> graph(MAX_N + 1, vector<bool>(MAX_N + 1, false));
 vector<int> answer;
 
-void dfs(int curNode) {
-    if (flag)
-        return;
-
+bool dfs(int curNode) {
     answer.push_back(curNode);
-    if (answer.size() == k) {
-        flag = true;
-        copy(answer.begin(), answer.end(), ostream_iterator<int>(cout, "\n"));
-        return;
-    }
-    for (int nextNode : graph[curNode]) {
-        int i = 0, j = 0;
-        while (i < answer.size() && j < graph[nextNode].size() && answer[i] >= graph[nextNode][j]) {
-            if (answer[i] == graph[nextNode][j]) {
-                i++;
+    if (answer.size() == k)     
+        return true;
+
+    for (int nextNode = curNode + 1; nextNode <= n; nextNode++) {
+        if (graph[curNode][nextNode]) {
+            bool flag = true;
+            for (int frd : answer) {
+                if (!graph[nextNode][frd]) {
+                    flag = false;
+                    break;
+                }
             }
-            j++;
+            if (flag) {
+                if (dfs(nextNode))
+                    return true;
+            }
         }
-        if (i == answer.size())
-            dfs(nextNode);
     }
-    if (answer.size() == k)
-        return;
     answer.pop_back();
+    return false;
 }
 
 int main() {
@@ -42,14 +39,15 @@ int main() {
     int u, v;
     while (f--) {
         cin >> u >> v;
-        graph[u].push_back(v);
-        graph[v].push_back(u);
+        graph[u][v] = true;
+        graph[v][u] = true;
     }
-    for (int i = 1; i <= n; i++)
-        sort(graph[i].begin(), graph[i].end());
     answer.reserve(k);
-    for (int i = 1; i <= n; i++)
-        dfs(i);
-    if (!flag)
-        cout << -1;
+    for (int i = 1; i <= n; i++) {
+        if (dfs(i)) {
+            copy(answer.begin(), answer.end(), ostream_iterator<int>(cout, "\n"));
+            return 0;
+        }
+    }
+    cout << -1;
 }
