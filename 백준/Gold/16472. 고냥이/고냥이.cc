@@ -1,12 +1,5 @@
-/*
-    a b b c a c c b a
-1   1 1 2 1 1 1 2 1 1
-2   1 2 3 3 2 3 4 3 2
-*/
 #include <iostream>
-#include <stack>
 #include <algorithm>
-#include <iterator>
 using namespace std;
 
 const int MAX_N = 26;
