@@ -4,18 +4,8 @@
 #include <iterator>
 using namespace std;
 
-int cheapDigit, minCost;
+int first, other;
 vector<int> vCost, answer;
-
-void updateBest(int start, int end) {
-    minCost = 50;
-    for (int digit = start; digit < end; digit++) {
-        if (vCost[digit] <= minCost) {
-            minCost = vCost[digit];
-            cheapDigit = digit;
-        }
-    }
-}
 
 int main() {
     ios_base::sync_with_stdio(false);
@@ -27,35 +17,32 @@ int main() {
         cin >> vCost[i];
     }
     int m; cin >> m;
-    bool flag = true;
-    updateBest(0, n);
-    if (cheapDigit == 0) {
-        updateBest(1, n);
-        flag = false;
-    }
-
-    int budget;
-    if (flag) {
-        answer.resize(m / minCost, cheapDigit);
-        budget = m % minCost;
-    } else {
-        if (m >= minCost)
-            answer.push_back(cheapDigit);
-        else
-            answer.push_back(0);
-
-        budget = m - minCost;
-        for (int i = 0; i < budget / vCost[0]; i++) {
-            answer.push_back(0);
+    
+    first = n-1;
+    for (int i = n-2; i > 0; i--) {
+        if (vCost[i] < vCost[first]) {
+            first = i;
         }
-        budget -= (answer.size() - 1) * vCost[0];
     }
+    if (m < vCost[first]) {
+        cout << 0;
+        return 0;
+    }
+    other = vCost[0] < vCost[first] ? 0 : first;
+
+    answer.push_back(first);
+    m -= vCost[first];
+    while (m - vCost[other] >= 0) {
+        answer.push_back(other);
+        m -= vCost[other];
+    } 
+
     for (int pos = 0; pos < answer.size(); pos++) {
         int curDigit = answer[pos];
         for (int digit = n-1; digit > curDigit; digit--) {
-            if (budget + vCost[curDigit] >= vCost[digit]) {
+            if (m + vCost[curDigit] >= vCost[digit]) {
                 answer[pos] = digit;
-                budget += vCost[curDigit] - vCost[digit];
+                m += vCost[curDigit] - vCost[digit];
                 break;
             }
         }
