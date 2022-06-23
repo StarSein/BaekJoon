@@ -1,19 +1,16 @@
 #include <iostream>
 using namespace std;
 
-const int MAX_N = 1e4, NUM_CHAR = 26;
 
-int n, m;
-string arrStr[MAX_N];
-int bit[MAX_N];
-int forget;
+const int MAX_N = 1e4;
+int bit[MAX_N], cnt[1 << 21];
+const int trans[26] {
+    -1, 0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8, 9, 10, -1, 11,
+    12, 13, 14, 15, -1, 16, 17, 18, 19, 20
+};
 
-int countWords() {
-    int cnt = 0;
-    for (int i = 0; i < n; i++) {
-        cnt += ((bit[i] & forget) == 0);
-    }
-    return cnt;
+inline int charToPos(char c) {
+    return trans[c-'a'];
 }
 
 int main() {
@@ -21,23 +18,34 @@ int main() {
     cin.tie(NULL);
     cout.tie(NULL);
 
-    cin >> n >> m;
+    int n, m; cin >> n >> m;
+    int pos;
+    string inp;
     for (int i = 0; i < n; i++) {
-        cin >> arrStr[i];
+        cin >> inp;
+        for (char& c : inp) {
+            pos = charToPos(c);
+            if (pos >= 0) {
+                bit[i] |= 1 << pos;
+            } 
+        }
+        cnt[bit[i]]++;
     }
-    for (int i = 0; i < n; i++) {
-        for (char& c : arrStr[i]) {
-            bit[i] |= 1 << (c-'a');
+
+    for (int i = 1; i < (1 << 21); i <<= 1) {
+        for (int j = 0; j < (1 << 21); j += i << 1) {
+            for (int k = 0; k < i; k++) {
+                cnt[i | j | k] += cnt[j | k];
+            }
         }
     }
+    int remember = (1 << 21) - 1;
     int o; char x;
     for (int i = 0; i < m; i++) {
         cin >> o >> x;
-        if (o == 1) {
-            forget |= 1 << (x-'a');
-        } else {
-            forget ^= 1 << (x-'a');
-        }
-        cout << countWords() << '\n';
+
+        remember ^= 1 << charToPos(x);
+
+        cout << cnt[remember] << '\n';
     }
 }
