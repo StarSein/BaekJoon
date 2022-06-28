@@ -6,6 +6,22 @@ const int MAX_N = 30;
 ll weight[MAX_N];
 vector<int> vW1, vW2;
 
+
+int binarySearch(vector<int> &vec, int target) {
+    int mid, lp = 0, rp = vec.size()-1;
+    int ret = -1;
+    while (lp <= rp) {
+        mid = (lp + rp) >> 1;
+        if (vec[mid] <= target) {
+            lp = mid + 1;
+            ret = mid;
+        } else {
+            rp = mid - 1;
+        }
+    }
+    return ret;
+}
+
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
@@ -34,12 +50,11 @@ int main() {
         }
     }
     int answer = 0;
-    for (int &w1 : vW1) {
-        for (int &w2 : vW2) {
-            if (w1 + w2 <= c) {
-                answer++;
-            }
-        }
+    sort(vW1.begin(), vW1.end(), less<int>());
+    sort(vW2.begin(), vW2.end(), less<int>());
+    int ub = binarySearch(vW1, c);
+    for (int i = 0; i <= ub; i++) {
+        answer += binarySearch(vW2, c-vW1[i]) + 1;
     }
     cout << answer;
 }
