@@ -6,9 +6,7 @@ using namespace std;
 
 const int MAX_N = 1e4, ROOT = 1;
 int tree[MAX_N+1][3];
-bool isLeftChild[MAX_N+1];
-vector<int> stack;
-vector<int> ans;
+vector<int> stack, ans;
 
 void postOrder(int curNode) {
     if (tree[curNode][1]) {
