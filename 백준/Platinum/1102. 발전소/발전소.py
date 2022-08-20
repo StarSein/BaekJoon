@@ -24,13 +24,6 @@ def getMinCost(visit: int, numLeft: int) -> int:
     if dpC[visit] != INF:
         return dpC[visit]
 
-    ret = INF
-    for nextNode in range(N):
-        if ~visit & (1 << nextNode):
-            val = getMinWeight(visit, nextNode) + getMinCost(visit | (1 << nextNode), numLeft - 1)
-            if val < ret:
-                ret = val
-
     dpC[visit] = min([getMinWeight(visit, nextNode) + getMinCost(visit | 1 << nextNode, numLeft - 1)
                       for nextNode in range(N) if not visit & 1 << nextNode])
     return dpC[visit]
