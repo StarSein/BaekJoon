@@ -5,44 +5,26 @@ def input():
     return sys.stdin.readline().rstrip()
 
 
-def getNumStair(length: int, mask: int, digit: int) -> int:
-    if length == 0:
-        return 0
+def solution(N: int) -> int:
+    MOD = int(1e9)
+    NUM_DIGIT = 10
+    dp = [[[0 for i in range(1 << NUM_DIGIT)] for j in range(N + 1)] for k in range(NUM_DIGIT)]
+    for digit in range(1, NUM_DIGIT):
+        dp[digit][1][1 << digit] = 1
 
-    if not mask & 1 << digit:
-        return 0
-
-    if dp[digit][length][mask] != -1:
-        return dp[digit][length][mask]
-
-    ret = 0
-    if digit == 0:
-        ret += getNumStair(length - 1, mask, 1) + getNumStair(length - 1, mask ^ 1 << digit, 1)
-    elif digit == 9:
-        ret += getNumStair(length - 1, mask, 8) + getNumStair(length - 1, mask ^ 1 << digit, 8)
-    else:
-        ret += getNumStair(length - 1, mask, digit + 1) \
-               + getNumStair(length - 1, mask, digit - 1) \
-               + getNumStair(length - 1, mask ^ 1 << digit, digit + 1) \
-               + getNumStair(length - 1, mask ^ 1 << digit, digit - 1)
-    dp[digit][length][mask] = ret
-    return ret
-
-
-def solution() -> int:
-    return sum([getNumStair(N, (1 << NUM_DIGIT) - 1, i) for i in range(NUM_DIGIT)])
+    for length in range(1, N):
+        for digit in range(NUM_DIGIT):
+            for mask in range(1 << NUM_DIGIT):
+                val = dp[digit][length][mask]
+                if 1 <= digit <= 8:
+                    dp[digit + 1][length + 1][mask | 1 << digit + 1] += val
+                    dp[digit - 1][length + 1][mask | 1 << digit - 1] += val
+                elif digit == 0:
+                    dp[1][length + 1][mask | 1 << 1] += val
+                else:
+                    dp[8][length + 1][mask | 1 << 8] += val
+    return sum([dp[digit][N][(1 << NUM_DIGIT) - 1] for digit in range(NUM_DIGIT)]) % MOD
 
 
 if __name__ == '__main__':
-    N = int(input())
-
-    MOD = int(1e9)
-
-    NUM_DIGIT = 10
-
-    dp = [[[-1 for k in range(1 << NUM_DIGIT)] for j in range(N + 1)] for i in range(NUM_DIGIT)]
-    dp[0][1][1 << 0] = 0
-    for i in range(1, NUM_DIGIT):
-        dp[i][1][1 << i] = 1
-
-    print(solution() % MOD)
+    print(solution(int(input())))
