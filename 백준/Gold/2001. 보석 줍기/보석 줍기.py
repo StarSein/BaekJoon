@@ -42,7 +42,7 @@ def solution() -> int:
                 if j != -1 and not mask & 1 << j:
                     if not visit[nextNode][mask | 1 << j]:
                         dq.append((nextNode, mask | 1 << j, numJewel + 1))
-                        visit[nextNode][mask] = True
+                        visit[nextNode][mask | 1 << j] = True
     return ans
 
 
