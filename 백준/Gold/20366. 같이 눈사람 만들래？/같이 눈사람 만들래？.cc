@@ -1,10 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <tuple>
+#include <unordered_set>
 using namespace std;
+typedef tuple<int, int, int> ti;
 
 const int INF = 2e9;
 vector<int> hVec;
+vector<ti> tVec;
 
 
 int main() {
@@ -18,23 +22,24 @@ int main() {
         cin >> hVec[i];
     }
 
-    sort(hVec.begin(), hVec.end());
+    tVec.reserve(N * (N - 1) / 2);
+    for (int i = 0; i < N - 1; i++) {
+        for (int j = i + 1; j < N; j++) {
+            tVec.emplace_back(hVec[i] + hVec[j], i, j);
+        }
+    }
 
+    sort(tVec.begin(), tVec.end());
 
     int ans = INF;
-    for (int i = 0; i < hVec.size() - 3; i++) {
-        for (int j = i + 3; j < hVec.size(); j++) {
-            int heightA = hVec[i] + hVec[j];
-            int lp = i + 1, rp = j - 1;
-            while (lp < rp) {
-                int heightB = hVec[lp] + hVec[rp];
-                ans = min(ans, abs(heightA - heightB));
-                if (heightB > heightA) {
-                    rp--;
-                } else {
-                    lp++;
-                }
-            }
+    for (int i = 0; i < tVec.size() - 1; i++) {
+        unordered_set<int> s;
+        s.insert(get<1>(tVec[i]));
+        s.insert(get<2>(tVec[i]));
+        s.insert(get<1>(tVec[i+1]));
+        s.insert(get<2>(tVec[i+1]));
+        if (s.size() == 4) {
+            ans = min(ans, get<0>(tVec[i+1]) - get<0>(tVec[i]));
         }
     }
     cout << ans;

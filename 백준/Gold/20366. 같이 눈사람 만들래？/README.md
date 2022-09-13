@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 2024 KB, 시간: 168 ms
+메모리: 4136 KB, 시간: 80 ms
 
 ### 분류
 
@@ -20,7 +20,7 @@
 
 <p>엘자와 안나는 눈덩이 <em>N</em>개 중 서로 다른 4개를 골라서 눈사람을 각각 1개씩, 총 2개를 만들려고 한다. 두 자매는 두 눈사람의 키의 차이가 작을수록 두 눈사람의 사이가 좋을 것이라고 믿는다. 우리는 엘자와 안나가 가장 사이좋은 두 눈사람을 만들기 위해서 도와주려고 한다.</p>
 
-<p style="text-align: center;"><img alt="" src="" style="height: 277px; width: 400px;"></p>
+<p style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/65c871bd-cf26-4fd7-bda6-91728bbaf742/-/preview/" style="height: 277px; width: 400px;"></p>
 
 <p>주어진 <em>N</em>개의 눈덩이를 이용하여 만들 수 있는 두 눈사람의 키 차이 중 최솟값을 구하는 프로그램을 작성하시오.</p>
 
