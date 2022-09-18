@@ -1,46 +1,54 @@
+"""
+여러 건물을 동시에 건설 가능하므로
+지을 수 있는 건물은 모두 건설한다고 하면,
+특정 시점에 건설 가능한 건물의 목록은 유일하다.
+
+따라서 시간을 기준으로 오름차순 정렬이 되는 힙을 사용하자.
+"""
+
+
 import sys
+import heapq
 
 
-T = int(sys.stdin.readline())
-res = ""
-for case in range(T):
-    N, K = map(int, sys.stdin.readline().split())
-    l_D = list(map(int, sys.stdin.readline().split()))
-    l_follow = [[] for _ in range(N)]
-    l_precede = [[] for _ in range(N)]
+def input():
+    return sys.stdin.readline().rstrip()
+
+
+def solution():
+    N, K = map(int, input().split())
+    D = list(map(int, input().split()))
+
+    precede_cnt = [0] * N
+    follow_list = [[] for _ in range(N)]
+
     for _ in range(K):
-        X, Y = map(int, sys.stdin.readline().split())
-        l_follow[X-1].append(Y-1)
-        l_precede[Y-1].append(X-1)
-    W = int(sys.stdin.readline()) - 1
+        X, Y = map(lambda x: (int(x) - 1), input().split())
+        precede_cnt[Y] += 1
+        follow_list[X].append(Y)
 
-    buildArray = list()
-    for bdg in range(N):
-        if not l_precede[bdg]:
-            buildArray.append(bdg)
+    W = int(input()) - 1
 
-    time = 0
-    while l_precede[W]:
-        minBuildTime = 100000
-        for bdg in buildArray:
-            minBuildTime = min(minBuildTime, l_D[bdg])
-        time += minBuildTime
-        tempPush = list()
-        set_buildComplete = set()
-        for bdg in buildArray:
-            l_D[bdg] -= minBuildTime
-            if l_D[bdg] == 0:
-                set_buildComplete.add(bdg)
-                if l_follow[bdg]:
-                    for nextBuild in l_follow[bdg]:
-                        l_precede[nextBuild].remove(bdg)
-                        if not l_precede[nextBuild]:
-                            tempPush.append(nextBuild)
-        tempExist = list()
-        for bdg in buildArray:
-            if bdg not in set_buildComplete:
-                tempExist.append(bdg)
-        buildArray = tempExist + tempPush
+    heap = [(D[i], i) for i in range(N) if precede_cnt[i] == 0]
+    heapq.heapify(heap)
 
-    res = "%s\n%d" % (res, time + l_D[W])
-sys.stdout.write(res.lstrip())
+    ret = -1
+    while heap:
+        cur_time, cur_bld = heapq.heappop(heap)
+
+        if cur_bld == W:
+            ret = cur_time
+            break
+
+        for flw_bld in follow_list[cur_bld]:
+            if precede_cnt[flw_bld] == 1:
+                heapq.heappush(heap, (cur_time + D[flw_bld], flw_bld))
+            else:
+                precede_cnt[flw_bld] -= 1
+    return ret
+
+
+if __name__ == '__main__':
+    T = int(input())
+    for _ in range(T):
+        print(solution())
