@@ -36,7 +36,7 @@ O(N^4) = 9^4 = 3^8 = 6561
 [try3] WA
 원인) sequence의 길이가 원래 의도한 길이와 같을 때에만 유의미한 값으로 취급했는데,
     [0, 1, 2, 3] 처럼 앞에 0이 오는 수열의 길이도 4로 취급한 점이 오류.
-    
+
 [try4] WA
 원인) 문자열 '0'를 sequence에 넣어놓고 정수 0 과 비교함.
 """
@@ -50,10 +50,12 @@ input = lambda: stdin.readline().rstrip()
 def solution() -> int:
     N, M = map(int, input().split())
     MAX_LEN = max(N, M)
-    table = [list(map(lambda x: int(x), iter(input()))) for _ in range(N)]
+    table = [input() for _ in range(N)]
     answer = -1
 
+    # 자릿수가 많은 완전제곱수부터 탐색
     for seq_len in range(MAX_LEN, 0, -1):
+        # 길이 seq_len 의 완전제곱수가 발견되었다면 더 이상 탐색할 필요가 없음
         if answer != -1:
             break
 
@@ -61,6 +63,7 @@ def solution() -> int:
             for c_start in range(M):
                 for r_step in range(-N + 1, N, 1):
                     for c_step in range(-M + 1, M, 1):
+                        # 수열의 길이가 1보다 크면서 행 공차와 열 공차가 0이면 안 됨
                         if seq_len > 1 and (r_step | c_step) == 0:
                             continue
                         sequence = []
@@ -68,13 +71,16 @@ def solution() -> int:
                             row = r_start + r_step * i
                             col = c_start + c_step * i
                             if 0 <= row < N and 0 <= col < M:
-                                sequence.append(str(table[row][col]))
+                                sequence.append(table[row][col])
                             else:
                                 break
 
+                        # 수열의 길이가 1보다 크고 0으로 시작하면 로직 에러 발생
+                        # 수열의 길이와 만들어진 수의 자릿수가 다르면 로직 에러 발생
                         if (seq_len > 1 and sequence[0] == '0') or len(sequence) != seq_len:
                             continue
 
+                        # 만들어진 수의 제곱근이 정수이면 정답 갱신에 사용
                         result = int(''.join(sequence))
                         if sqrt(result).is_integer():
                             answer = max(answer, result)
