@@ -1,96 +1,71 @@
 #include <iostream>
 #include <vector>
+#include <iterator>
+#include <algorithm>
 using namespace std;
-typedef long long ll;
 typedef pair<int, int> pi;
-typedef pair<ll, ll> pll;
+typedef long long ll;
 
+const int MAX_N = 1e5 + 1;
 const int LOG = 17;
-vector<int> depthVec;
+
+ll depth[MAX_N], cost[MAX_N];
+ll table[MAX_N][LOG];
 vector<vector<pi>> graph;
-vector<vector<pll>> table;
+vector<ll> ansVec;
 
-
-void dfs(int currentNode, int parentNode, int depth) {
-    depthVec[currentNode] = depth;
-    for (auto &[nextNode, weight] : graph[currentNode]) {
-        if (nextNode != parentNode) {
-            table[nextNode][0] = {currentNode, weight};
-            dfs(nextNode, currentNode, depth + 1);
+void dfs(int curNode, int parNode, int d) {
+    depth[curNode] = d;
+    for (auto &[nextNode, weight] : graph[curNode]) {
+        if (nextNode != parNode) {
+            table[nextNode][0] = curNode;
+            cost[nextNode] = cost[curNode] + weight;
+            dfs(nextNode, curNode, d + 1);
         }
     }
 }
 
-
-pll getAncestor(int node, int step) {
-    int exp = LOG - 1;
-    int bit = 1 << exp;
-    ll cost = 0;
-    while (bit) {
-        if (table[node][exp].first != -1 && (step & bit)) {
-            cost += table[node][exp].second;
-            node = table[node][exp].first;
+int getAncestor(int node, int step) {
+    for (int exp = LOG - 1, bit = 1 << exp; bit > 0; exp--, bit >>= 1) {
+        if (step & bit) {
+            node = table[node][exp];
         }
-        exp--;
-        bit >>= 1;
     }
-    return {node, cost};
+    return node;
 }
 
-pll getLCA(int u, int v) {
-    ll cost = 0;
-    while (u != v) {
-        int exp = LOG - 1;
-        while (exp && (table[u][exp].first == -1 || table[u][exp].first == table[v][exp].first)) {
-            exp--;
-        }
-        
-        cost += table[u][exp].second;
-        cost += table[v][exp].second;
-        u = table[u][exp].first;
-        v = table[v][exp].first;
+int getLCA(int u, int v) {
+    if (depth[u] > depth[v]) {
+        swap(u, v);
     }
-    return {u, cost};
+    v = getAncestor(v, depth[v] - depth[u]);
+
+    if (u != v) {
+        for (int exp = LOG - 1, bit = 1 << exp; bit > 0; exp--, bit >>= 1) {
+            if (table[u][exp] != table[v][exp]) {
+                u = table[u][exp];
+                v = table[v][exp];
+            }
+        }
+        u = table[u][0];
+    }
+    return u;
 }
 
 ll queryOne(int u, int v) {
-    if (depthVec[u] > depthVec[v]) {
-        swap(u, v);
-    }
-    auto [nv, cost] = getAncestor(v, depthVec[v] - depthVec[u]);
-    if (u == nv) {
-        return cost;
-    }
-    cost += getLCA(u, nv).second;
-    return cost;
+    int lca = getLCA(u, v);
+    return cost[u] + cost[v] - 2 * cost[lca];
 }
 
 ll queryTwo(int u, int v, int k) {
-    if (k == 0) {
-        return u;
-    }
-    if (depthVec[u] > depthVec[v]) {
-        swap(u, v);
-        k *= -1;
-    }
-    ll nv = getAncestor(v, depthVec[v] - depthVec[u]).first;
-    if (u == nv) {
-        if (k > 0) {
-            return getAncestor(v, depthVec[v] - depthVec[u] - k).first;
-        } else {
-            return getAncestor(v, -k).first;
-        }
-    }
-    ll lca = getLCA(u, nv).first;
-    int dist = depthVec[u] + depthVec[v] - 2 * depthVec[lca];
-    if (k < 0) {
-        swap(u, v);
-        k *= -1;
-    }
-    if (k <= depthVec[u] - depthVec[lca]) {
-        return getAncestor(u, k).first;
+    int lca = getLCA(u, v);
+    int diffU = depth[u] - depth[lca];
+    int diffV = depth[v] - depth[lca];
+    
+    if (k <= diffU) {
+        return getAncestor(u, k);
     } else {
-        return getAncestor(v, dist - k).first;
+        return getAncestor(v, diffU + diffV - k);
     }
 }
 
@@ -108,40 +83,23 @@ int main() {
         graph[v].emplace_back(u, w);
     }
 
-    depthVec.resize(N + 1);
-    table.resize(N + 1, vector<pll>(LOG, {-1, -1}));
     dfs(1, 0, 0);
     for (int exp = 1; exp < LOG; exp++) {
         for (int node = 1; node <= N; node++) {
-            auto &[midNode, midLength] = table[node][exp-1];
-            if (midNode == -1) {
-                continue;
-            }
-            auto &[endNode, endLength] = table[midNode][exp-1];
-            if (endNode == -1) {
-                continue;
-            }
-            table[node][exp] = {endNode, midLength + endLength};
+            table[node][exp] = table[table[node][exp-1]][exp-1];
         }
     }
-
     int M; cin >> M;
-    vector<ll> vec;
-    vec.reserve(M);
     for (int i = 0; i < M; i++) {
         int q, u, v, k;
         cin >> q;
         if (q == 1) {
             cin >> u >> v;
-            vec.push_back(queryOne(u, v));
+            cout << queryOne(u, v) << '\n';
         } else {
             cin >> u >> v >> k;
-            vec.push_back(queryTwo(u, v, k - 1));
+            cout << queryTwo(u, v, k - 1) << '\n';
         }
-    }
-
-    for (ll &e : vec) {
-        cout << e << '\n';
     }
     return 0;
 }
