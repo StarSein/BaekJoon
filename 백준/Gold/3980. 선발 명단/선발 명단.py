@@ -6,15 +6,19 @@ input = lambda: stdin.readline().rstrip()
 
 
 def solution(stats: Tuple[Tuple[int, ...]]) -> int:
+    proper_stats = tuple(tuple((pos, stat) for pos, stat in enumerate(stats[player])
+                               if stats[player][pos])
+                         for player in range(NUM_POS))
+
     occupied = [False] * NUM_POS
 
     def dfs(player: int, cur_sum: int) -> int:
         if player == NUM_POS:
             return cur_sum
-        
+
         ret = 0
-        for pos in range(NUM_POS):
-            if stats[player][pos] and not occupied[pos]:
+        for pos, stat in proper_stats[player]:
+            if not occupied[pos]:
                 occupied[pos] = True
                 res = dfs(player + 1, cur_sum + stats[player][pos])
                 ret = max(ret, res)
