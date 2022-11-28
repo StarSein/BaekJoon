@@ -21,21 +21,16 @@ def solution(n: int, m: int, males: List[int], females: List[int]) -> int:
         n, m = m, n
         males, females = females, males
 
-    dp = [[-1 for j in range(m + 1)] for i in range(n + 1)]
     INF = int(1e9)
+    dp = [[INF for j in range(m + 1)] for i in range(n + 1)]
 
-    def get_dp(i: int, j: int) -> int:
-        if dp[i][j] != -1:
-            return dp[i][j]
-        if j == m:
-            dp[i][j] = 0
-            return 0
-        ret = INF
-        for d in range(n - m - i + j + 1):
-            ret = min(ret, abs(males[i + d] - females[j]) + get_dp(i + d + 1, j + 1))
-        dp[i][j] = ret
-        return ret
-    return get_dp(0, 0)
+    for i in range(n + 1):
+        dp[i][0] = 0
+    for j in range(1, m + 1):
+        for i in range(j, n + 1):
+            dp[i][j] = min(dp[i - 1][j], abs(males[i - 1] - females[j - 1]) + dp[i - 1][j - 1])
+
+    return dp[n][m]
 
 
 if __name__ == '__main__':
