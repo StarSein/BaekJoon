@@ -39,18 +39,21 @@ def read_input():
 
 def solution(N: int, scores: List[int], R: List[List[int]], mafia: int) -> int:
     def dfs(bit: int, alive_cnt: int) -> int:
-        if alive_cnt == 1:
+        """
+        :param bit: 죽은 사람들의 번호가 저장된 비트마스크
+        :param alive_cnt: 생존자의 수
+        :return: 현 시점에서 지날 수 있는 최대의 밤의 수
+        """
+        if alive_cnt == 1:  # 생존자가 1명이면 더 이상의 밤은 없다
             return 0
 
         ret = 0
-        if alive_cnt & 1:
-            ID, SCORE = 0, 1
-            day_killed = max(((person, scores[person]) for person in range(N)
-                              if (1 << person) & ~bit),
-                             key=lambda x: (x[SCORE], -x[ID]))[ID]
-            if day_killed != mafia:
+        if alive_cnt & 1:   # 생존자의 수가 홀수인 경우
+            day_killed = max((person for person in range(N) if (1 << person) & ~bit),
+                             key=lambda x: scores[x])
+            if day_killed != mafia: # 낮에 죽는 사람이 은진이가 아닌 경우
                 ret = dfs((1 << day_killed) | bit, alive_cnt - 1)
-        else:
+        else:               # 생존자의 수가 짝수인 경우
             for night_killed in range(N):
                 if (1 << night_killed) & ~bit and night_killed != mafia:
                     for person, change in enumerate(R[night_killed]):
