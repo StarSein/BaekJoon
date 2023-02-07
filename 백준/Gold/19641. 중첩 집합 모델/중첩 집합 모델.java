@@ -55,12 +55,11 @@ public class Main {
         right[current] = ++cnt;
     }
 
-    static void writeOutput() throws IOException {
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static void writeOutput() {
+        StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= N; i++) {
-            bw.write(String.format("%d %d %d\n", i, left[i], right[i]));
+            sb.append(i).append(' ').append(left[i]).append(' ').append(right[i]).append('\n');
         }
-        bw.flush();
-        bw.close();
+        System.out.println(sb);
     }
 }
