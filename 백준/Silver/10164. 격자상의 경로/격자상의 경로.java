@@ -25,8 +25,8 @@ public class Main {
 		dp = new int[size][size];
 		int answer;
 		if (K > 0) {
-			int r = K / M;
-			int c = K % M - 1;
+			int r = (K - 1) / M;
+			int c = (K - 1) % M;
 			
 			int n1 = r + c;
 			int k1 = Math.min(r, c);
