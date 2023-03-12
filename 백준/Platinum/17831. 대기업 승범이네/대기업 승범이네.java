@@ -63,6 +63,6 @@ public class Main {
             add1 = Math.max(add1, A[node] * A[child] - dp[child][1] + dp[child][0]);
         }
         dp[node][0] = res0;
-        dp[node][1] = dp[node][1] = Math.max(res0, res1 + (add1 == Integer.MIN_VALUE ? 0 : add1));
+        dp[node][1] = Math.max(res0, res1 + (add1 == Integer.MIN_VALUE ? 0 : add1));
     }
 }
