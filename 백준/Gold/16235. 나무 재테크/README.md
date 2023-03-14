@@ -1,14 +1,14 @@
-# [Gold IV] 나무 재테크 - 16235 
+# [Gold III] 나무 재테크 - 16235 
 
 [문제 링크](https://www.acmicpc.net/problem/16235) 
 
 ### 성능 요약
 
-메모리: 220332 KB, 시간: 936 ms
+메모리: 131608 KB, 시간: 548 ms
 
 ### 분류
 
-구현(implementation), 시뮬레이션(simulation)
+구현, 자료 구조, 시뮬레이션
 
 ### 문제 설명
 
