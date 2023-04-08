@@ -12,9 +12,8 @@ public class Main {
         }
     }
     static int N;
-    static long Px, Py;
     static ArrayList<Point> points, nextPoints;
-    static Point start;
+    static Point jail, start;
 
     public static void main(String[] args) throws Exception {
         readInput();
@@ -25,8 +24,9 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
-        Px = Long.parseLong(st.nextToken());
-        Py = Long.parseLong(st.nextToken());
+        long Px = Long.parseLong(st.nextToken());
+        long Py = Long.parseLong(st.nextToken());
+        jail = new Point(Px, Py);
         points = new ArrayList<>(N);
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
@@ -64,19 +64,19 @@ public class Main {
                 stack.add(next);
             }
 
-            long minX = Long.MAX_VALUE;
-            long maxX = Long.MIN_VALUE;
-            long minY = Long.MAX_VALUE;
-            long maxY = Long.MIN_VALUE;
-            while (!stack.isEmpty()) {
-                Point cur = stack.pop();
-                if (cur.x < minX) minX = cur.x;
-                if (cur.x > maxX) maxX = cur.x;
-                if (cur.y < minY) minY = cur.y;
-                if (cur.y > maxY) maxY = cur.y;
+            boolean able = true;
+            stack.add(start);
+            while (stack.size() >= 2) {
+                Point first = stack.get(stack.size() - 2);
+                Point second = stack.get(stack.size() - 1);
+                if (ccw(first, jail, second) >= 0) {
+                    able = false;
+                    break;
+                }
+                stack.pop();
             }
 
-            if (minX < Px && Px < maxX && minY < Py && Py < maxY) {
+            if (able) {
                 answer++;
                 points = nextPoints;
             } else {
