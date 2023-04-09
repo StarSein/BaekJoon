@@ -19,6 +19,13 @@ public class Main {
             this.a = a;
             this.b = b;
         }
+
+
+        public void swap() {
+            Point temp = a;
+            a = b;
+            b = temp;
+        }
     }
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -60,8 +67,8 @@ public class Main {
         ArrayList<Point> blackHull = convexHull(blacks);
         ArrayList<Point> whiteHull = convexHull(whites);
 
-        boolean isNo = (n > 1 && includeCheck(whites, blackHull) ||
-                        m > 1 && includeCheck(blacks, whiteHull) ||
+        boolean isNo = (n > 1 && insideCheck(whites, blackHull) ||
+                        m > 1 && insideCheck(blacks, whiteHull) ||
                         n > 1 && m > 1 && crossCheck(blackHull, whiteHull));
         sb.append(isNo ? "NO\n" : "YES\n");
     }
@@ -113,7 +120,7 @@ public class Main {
         return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
     }
 
-    static boolean includeCheck(Point[] points, ArrayList<Point> hull) {
+    static boolean insideCheck(Point[] points, ArrayList<Point> hull) {
         for (Point target : points) {
             boolean inside = true;
             for (int i = 0; i < hull.size() - 1; i++) {
@@ -147,16 +154,9 @@ public class Main {
         int res2 = ccw(l2.a, l2.b, l1.a) * ccw(l2.a, l2.b, l1.b);
 
         if (res1 == 0 && res2 == 0) {
-            if (distance(l1.a, l1.b) < distance(l2.a, l2.b)) {
-                Line temp = l1;
-                l1 = l2;
-                l2 = temp;
-            }
-            int dist1 = distance(l1.a, l2.a);
-            int dist2 = distance(l1.a, l2.b);
-            int dist3 = distance(l1.b, l2.a);
-            int dist4 = distance(l1.b, l2.b);
-            return dist1 + dist3 == distance(l1.a, l1.b) || dist2 + dist4 == distance(l1.a, l1.b);
+            if (min(l1.a, l1.b) == l1.b) l1.swap();
+            if (min(l2.a, l2.b) == l2.b) l2.swap();
+            return min(l2.a, l1.b) == l2.a && min(l1.a, l2.b) == l1.a;
         } else {
             return res1 <= 0 && res2 <= 0;
         }

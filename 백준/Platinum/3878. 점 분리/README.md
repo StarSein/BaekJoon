@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 26836 KB, 시간: 384 ms
+메모리: 26944 KB, 시간: 344 ms
 
 ### 분류
 
@@ -16,7 +16,7 @@
 
 <p>아래 그림에서 제일 왼쪽 예제는 점선으로 표시된 직선으로 두 점을 나눌 수 있다. 하지만 나머지 예제는 직선으로 점을 분리할 수 없다.</p>
 
-<p><img alt="" src="" style="width: 616px; height: 175px;"></p>
+<p><img alt="" src="https://www.acmicpc.net/upload/images/sep.png" style="width: 616px; height: 175px;"></p>
 
 <p>흰 점과 검은 점의 좌표가 주어졌을 때, 직선으로 점을 분리할 수 있는지 없는지를 알아내는 프로그램을 작성하시오.</p>
 
