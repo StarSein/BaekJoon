@@ -1,75 +1,71 @@
-"""
-[1차 채점]
-IndexError. s가 N보다 클 수 있음을 간과했다.
-
-s의 값은 유지한 채, 파이어볼을 이동시킬 때에만, s % n만큼 이동시키면 된다.
-"""
-
-import sys
+from sys import stdin
+from typing import List, Tuple
 
 
 def input():
-    return sys.stdin.readline().rstrip()
+    return stdin.readline().rstrip()
 
 
-def main():
-    n, m, k = map(int, input().split())
-    matrix = [[[] for col in range(n)] for row in range(n)]
-    for fireball in range(m):
-        r, c, m, s, d = map(int, input().split())
-        matrix[r-1][c-1].append((m, s, d))
+def read_input():
+    N, M, K = map(int, input().split())
+    balls = [tuple(map(int, input().split())) for _ in range(M)]
+    return N, M, K, balls
 
-    dy = [-1, -1, 0, 1, 1, 1, 0, -1]
-    dx = [0, 1, 1, 1, 0, -1, -1, -1]
 
-    def in_bound(pos: int) -> int:
-        if pos < 0:
-            pos += n
-        elif pos >= n:
-            pos -= n
-        return pos
+def solution(N: int, M: int, K: int, balls: List[Tuple[int, int, int, int, int]]) -> int:
+    cur_grid = [[[] for j in range(N)] for i in range(N)]
+    nex_grid = [[[] for j in range(N)] for i in range(N)]
 
-    for move in range(k):
-        new_matrix = [[[] for col in range(n)] for row in range(n)]
-        for row in range(n):
-            for col in range(n):
-                for m, s, d in matrix[row][col]:
-                    nr, nc = row + dy[d] * (s % n), col + dx[d] * (s % n)
-                    nr, nc = in_bound(nr), in_bound(nc)
-                    new_matrix[nr][nc].append((m, s, d))
+    dir_list = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
 
-        for row in range(n):
-            for col in range(n):
-                fireballs = new_matrix[row][col]
-                if len(fireballs) >= 2:
-                    sum_m, sum_s, cnt_odd = 0, 0, 0
-                    for m, s, d in fireballs:
-                        sum_m += m
-                        sum_s += s
-                        cnt_odd += d % 2
-                    new_m = sum_m // 5
-                    if new_m == 0:
-                        fireballs.clear()
-                        continue
+    for r, c, m, s, d in balls:
+        cur_grid[r - 1][c - 1] = [(m, s, d)]
 
-                    new_s = sum_s // len(fireballs)
+    for _ in range(K):
+        for r in range(N):
+            for c in range(N):
+                for m, s, d in cur_grid[r][c]:
+                    dr, dc = dir_list[d]
+                    nr = (r + dr * s) % N
+                    nc = (c + dc * s) % N
+                    nex_grid[nr][nc].append((m, s, d))
 
-                    if cnt_odd == len(fireballs) or cnt_odd == 0:
-                        fireballs.clear()
-                        fireballs.extend([(new_m, new_s, new_d) for new_d in range(0, 7, 2)])
+        for r in range(N):
+            for c in range(N):
+                ball_cnt = len(nex_grid[r][c])
+                if ball_cnt < 2:
+                    cur_grid[r][c] = nex_grid[r][c][:]
+                    nex_grid[r][c].clear()
+                    continue
+
+                m_sum = 0
+                s_sum = 0
+                all_odd = True
+                all_even = True
+                for m, s, d in nex_grid[r][c]:
+                    m_sum += m
+                    s_sum += s
+                    if d % 2 == 1:
+                        all_even = False
                     else:
-                        fireballs.clear()
-                        fireballs.extend([(new_m, new_s, new_d) for new_d in range(1, 8, 2)])
+                        all_odd = False
 
-        matrix = new_matrix
-    sum_mass = 0
-    for row in range(n):
-        for col in range(n):
-            for m, s, d in matrix[row][col]:
-                sum_mass += m
+                nex_grid[r][c].clear()
 
-    print(sum_mass)
+                m_nex = m_sum // 5
+                if m_nex == 0:
+                    cur_grid[r][c].clear()
+                else:
+                    s_nex = s_sum // ball_cnt
+                    dir_range = range(0, 8, 2) if all_odd or all_even else range(1, 8, 2)
+                    cur_grid[r][c] = [(m_nex, s_nex, d_nex) for d_nex in dir_range]
+
+    answer = 0
+    for r in range(N):
+        for c in range(N):
+            answer += sum(m for m, s, d in cur_grid[r][c])
+    return answer
 
 
 if __name__ == '__main__':
-    main()
+    print(solution(*read_input()))
