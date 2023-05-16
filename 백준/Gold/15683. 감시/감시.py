@@ -1,91 +1,84 @@
-"""
-CCTV의 최대 개수가 8이므로
-완전 탐색으로 해도 경우의 수는 4^8 = 2^16 < 6만
-경우의 수별 시간 복잡도 O(NM) , NM <= 64
-완전 탐색으로 충분하다.
-"""
-import sys
-from copy import deepcopy
-from typing import List
+from sys import stdin
+from typing import List, Tuple
 
 
 def input():
-    return sys.stdin.readline().rstrip()
+    return stdin.readline().rstrip()
 
 
-def main():
-    dy = [0, 1, 0, -1]
-    dx = [1, 0, -1, 0]
-    WALL = 6
+def read_input():
+    N, M = map(int, input().split())
+    grid = [list(map(int, input().split())) for _ in range(N)]
+    return N, M, grid
 
-    def remove_zero(_office: List[List[int]]) -> List[List[int]]:
-        def one_way_remove_zero(d: int):
-            nc, nr = c + dy[d], r + dx[d]
-            while 0 <= nc < n and 0 <= nr < m and office[nc][nr] != WALL:
-                _office[nc][nr] = '#'
-                nc += dy[d]
-                nr += dx[d]
 
-        def cctv_1():
-            one_way_remove_zero(i)
-
-        def cctv_2():
-            one_way_remove_zero(i)
-            one_way_remove_zero((i+2) % 4)
-
-        def cctv_3():
-            one_way_remove_zero(i)
-            one_way_remove_zero((i+1) % 4)
-
-        def cctv_4():
-            one_way_remove_zero(i)
-            one_way_remove_zero((i+1) % 4)
-            one_way_remove_zero((i+2) % 4)
-
-        def cctv_5():
+def solution(N: int, M: int, grid: List[List[int]]) -> int:
+    def dfs(idx: int, num_vis: int) -> int:
+        if idx == len(cctv_list):
+            return num_vis
+        ret = 0
+        row, col, kind = cctv_list[idx]
+        marks = []
+        if kind == 1:
             for d in range(4):
-                one_way_remove_zero(d)
+                mark_vis(marks, row, col, *dir_list[d])
+                ret = max(ret, dfs(idx + 1, num_vis + len(marks)))
+                clear_vis(marks)
+        elif kind == 2:
+            for d in range(2):
+                mark_vis(marks, row, col, *dir_list[d])
+                mark_vis(marks, row, col, *dir_list[d + 2])
+                ret = max(ret, dfs(idx + 1, num_vis + len(marks)))
+                clear_vis(marks)
+        elif kind == 3:
+            for d in range(4):
+                mark_vis(marks, row, col, *dir_list[d])
+                mark_vis(marks, row, col, *dir_list[(d + 1) % 4])
+                ret = max(ret, dfs(idx + 1, num_vis + len(marks)))
+                clear_vis(marks)
+        elif kind == 4:
+            for d in range(4):
+                mark_vis(marks, row, col, *dir_list[d])
+                mark_vis(marks, row, col, *dir_list[(d + 1) % 4])
+                mark_vis(marks, row, col, *dir_list[(d + 2) % 4])
+                ret = max(ret, dfs(idx + 1, num_vis + len(marks)))
+                clear_vis(marks)
+        elif kind == 5:
+            for d in range(4):
+                mark_vis(marks, row, col, *dir_list[d])
+            ret = max(ret, dfs(idx + 1, num_vis + len(marks)))
+            clear_vis(marks)
+        return ret
 
-        for (c, r), i in zip(cctv_list, cur_dir_list):
-            cctv = office[c][r]
-            if cctv == 1:
-                cctv_1()
-            elif cctv == 2:
-                cctv_2()
-            elif cctv == 3:
-                cctv_3()
-            elif cctv == 4:
-                cctv_4()
-            else:
-                cctv_5()
-        return _office
+    def mark_vis(marks: List[Tuple[int, int]], sr: int, sc: int, dr: int, dc: int):
+        while True:
+            sr += dr
+            sc += dc
+            if sr < 0 or sr >= N or sc < 0 or sc >= M or grid[sr][sc] == 6:
+                break
+            if grid[sr][sc] == 0:
+                grid[sr][sc] = -1
+                marks.append((sr, sc))
+        return marks
 
-    def count_zero(_office: List[List[int]]) -> int:
-        return sum([_office[col].count(0) for col in range(n)])
+    def clear_vis(marks: []):
+        for row, col in marks:
+            grid[row][col] = 0
+        marks.clear()
 
-    def get_min_blind_spot(pos: int) -> int:
-        if pos == num_cctv:
-            return count_zero(remove_zero(deepcopy(office)))
-
-        min_area = n * m
-        for i in range(num_dir_list[pos]):
-            cur_dir_list[pos] = i
-            min_area = min(min_area, get_min_blind_spot(pos + 1))
-        return min_area
-
-    n, m = map(int, input().split())
-    office = [list(map(int, input().split())) for col in range(n)]
+    dir_list = [(0, 1), (1, 0), (0, -1), (-1, 0)]
     cctv_list = []
-    for col in range(n):
-        for row in range(m):
-            if 1 <= office[col][row] <= 5:
-                cctv_list.append((col, row))
-    num_cctv = len(cctv_list)
-    num_dir_list = [{1: 4, 2: 2, 3: 4, 4: 4, 5: 1}.get(office[col][row]) for col, row in cctv_list]
-    cur_dir_list = [-1] * num_cctv
+    num_blind = 0
+    for r in range(N):
+        for c in range(M):
+            if 0 < grid[r][c] < 6:
+                cctv_list.append((r, c, grid[r][c]))
+            elif grid[r][c] == 0:
+                num_blind += 1
 
-    print(get_min_blind_spot(0))
+    coverage = dfs(0, 0)
+    return num_blind - coverage
 
 
 if __name__ == '__main__':
-    main()
+    print(solution(*read_input()))
