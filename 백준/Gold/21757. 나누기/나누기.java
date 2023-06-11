@@ -21,7 +21,7 @@ public class Main {
             A[i] += A[i - 1];
         }
         int itvSum = A[N - 1] / 4;
-        if (itvSum == 0) {
+        if (A[N - 1] == 0) {
             long zeroCnt = 0L;
             for (int i = 0; i < N - 1; i++) {
                 if (A[i] == 0L) zeroCnt++;
