@@ -20,14 +20,15 @@ public class Main {
         for (int i = 1; i < N; i++) {
             A[i] += A[i - 1];
         }
-        int itvSum = A[N - 1] / 4;
+       
         if (A[N - 1] == 0) {
             long zeroCnt = 0L;
             for (int i = 0; i < N - 1; i++) {
                 if (A[i] == 0L) zeroCnt++;
             }
             answer = zeroCnt * (zeroCnt - 1) * (zeroCnt - 2) / 6;
-        } else {
+        } else if (A[N - 1] % 4 == 0) {
+            int itvSum = A[N - 1] / 4;
             dp = new long[4];
             dp[0] = 1L;
             for (int i = 0; i < N - 1; i++) {
