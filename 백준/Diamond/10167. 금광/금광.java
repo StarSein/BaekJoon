@@ -34,6 +34,7 @@ public class Main {
     static Mine[] mines;
     static Node[] seg;
     static ArrayList<ArrayList<Mine>> mineList = new ArrayList<>();
+    static final Node DUMMY_NODE = new Node();
     static long answer;
 
     public static void main(String[] args) throws Exception {
@@ -71,11 +72,11 @@ public class Main {
 
         seg = new Node[4 * xCnt];
         for (int s = 0; s < mineList.size(); s++) {
-            Arrays.fill(seg, new Node()); // dummy node 들이 동일한 객체를 참조하도록 한다
+            Arrays.fill(seg, DUMMY_NODE);
 
             for (int e = s; e < mineList.size(); e++) {
                 for (Mine mine : mineList.get(e)) {
-                    update(1, 1, N, mine.x, mine.w);
+                    update(1, 1, xCnt, mine.x, mine.w);
                 }
                 answer = Math.max(answer, seg[1].max);
             }
