@@ -36,20 +36,15 @@ public class Main {
 
         answer = Integer.MAX_VALUE;
         for (int i = 0; i < M - 1; i++) {
+            int p = edges[i].a;
+            int q = edges[i].b;
             for (int j = i + 1; j < M; j++) {
-                HashSet<Integer> set = new HashSet<>();
-                set.add(edges[i].a);
-                set.add(edges[i].b);
-                set.add(edges[j].a);
-                set.add(edges[j].b);
-                if (set.size() == 3) {
-                    Iterator<Integer> iter = set.iterator();
-                    int a = iter.next();
-                    int b = iter.next();
-                    int c = iter.next();
-                    if (isFriend[a][b] && isFriend[b][c] && isFriend[c][a]) {
-                        answer = Math.min(answer, friendCnt[a] + friendCnt[b] + friendCnt[c] - 6);
-                    }
+                int r = edges[j].a;
+                if (r == p || r == q) {
+                    r = edges[j].b;
+                }
+                if (isFriend[p][q] && isFriend[q][r] && isFriend[r][p]) {
+                    answer = Math.min(answer, friendCnt[p] + friendCnt[q] + friendCnt[r] - 6);
                 }
             }
         }
