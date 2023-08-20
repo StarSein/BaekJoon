@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class P20181 {
 
     static class Seg {
         int left;
@@ -42,12 +42,13 @@ public class Main {
         }
 
         dp = new long[N + 1];
-        while (!q.isEmpty()) {
-            Seg cur = q.pollFirst();
-            dp[cur.left] = Math.max(dp[cur.left], dp[cur.left - 1]);
-            dp[cur.right] = Math.max(dp[cur.right], dp[cur.left - 1] + cur.score);
+        for (int i = 1; i <= N; i++) {
+            dp[i] = Math.max(dp[i - 1], dp[i]);
+            if (!q.isEmpty()) {
+                Seg cur = q.pollFirst();
+                dp[cur.right] = Math.max(dp[cur.right], dp[cur.left - 1] + cur.score);
+            }
         }
-
         System.out.println(dp[N]);
     }
 }
