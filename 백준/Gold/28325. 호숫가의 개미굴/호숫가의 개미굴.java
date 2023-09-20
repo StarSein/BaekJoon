@@ -22,10 +22,12 @@ public class Main {
             }
         }
 
+        boolean allZero = true;
         for (int i = 0; i < N; i++) {
             Boolean curOccupied = dq.pollFirst();
             if (curOccupied) {
                 dq.offerFirst(curOccupied);
+                allZero = false;
                 break;
             } else {
                 dq.offerLast(curOccupied);
@@ -37,7 +39,7 @@ public class Main {
             Boolean curOccupied = dq.pollFirst();
             if (curOccupied || prevOccupied) {
                 prevOccupied = false;
-            } else {
+            } else if (i < N - 1 || !allZero){
                 answer++;
                 prevOccupied = true;
             }
