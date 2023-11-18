@@ -60,8 +60,11 @@ public class Main {
                 if (nextTime > T) {
                     continue;
                 }
-                int nextNode = nex.node;
                 int nextFare = cur.taxiFare + nex.taxiFare;
+                if (nextFare > M) {
+                    continue;
+                }
+                int nextNode = nex.node;
                 if (mem[nextNode][nextTime] > nextFare) {
                     dq.offer(new Tuple(nextNode, nextTime, nextFare));
                     mem[nextNode][nextTime] = nextFare;
@@ -74,6 +77,6 @@ public class Main {
             answer = Math.min(answer, mem[N][i]);
         }
 
-        System.out.println(answer > M ? -1 : answer);
+        System.out.println(answer == INF ? -1 : answer);
     }
 }
