@@ -4,9 +4,10 @@ import java.util.*;
 
 public class Main {
 
-    static final int INF = 1_001;
     static int N;
-    static int[] heights = new int[1_001];
+    static int[] heights = new int[1002];
+    static int[] prefixMax = new int[1001];
+    static int[] suffixMax = new int[1002];
 
     public static void main(String[] args) throws Exception {
         // 입력 받기
@@ -18,26 +19,21 @@ public class Main {
             int H = Integer.parseInt(st.nextToken());
             heights[L] = H;
         }
-
-        // 모든 y좌표에 대해 heights[x] >= y 인 x의 최댓값과 최솟값을 구한다
-        // (최댓값 - 최솟값 + 1)을 면적에 합산한다
-        int area = 0;
-        for (int y = 1; y <= 1000; y++) {
-            int curMinX = INF;
-            int curMaxX = 0;
-            for (int x = 1; x <= 1000; x++) {
-                if (heights[x] >= y) {
-                    curMinX = Math.min(curMinX, x);
-                    curMaxX = Math.max(curMaxX, x);
-                }
-            }
-            if (curMinX == INF) {
-                continue;
-            }
-            area += (curMaxX - curMinX + 1);
+        // 높이의 왼쪽 누적합, 오른쪽 누적합 배열 만들기
+        for (int i = 1; i <= 1000; i++) {
+            prefixMax[i] = Math.max(prefixMax[i - 1], heights[i]);
+        }
+        for (int i = 1000; i >= 1; i--) {
+            suffixMax[i] = Math.max(suffixMax[i + 1], heights[i]);
         }
 
-        // 면적을 출력한다
+        // 모든 x좌표에 대해 min(왼쪽 최댓값, 오른쪽 최댓값) 합산
+        int area = 0;
+        for (int i = 1; i <= 1000; i++) {
+            area += Math.min(prefixMax[i], suffixMax[i]);
+        }
+
+        // 합산 결과 출력
         System.out.println(area);
     }
 }
