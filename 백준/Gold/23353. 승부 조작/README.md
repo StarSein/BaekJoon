@@ -4,7 +4,7 @@
 
 ### 성능 요약
 
-메모리: 105200 KB, 시간: 800 ms
+메모리: 104608 KB, 시간: 780 ms
 
 ### 분류
 
@@ -12,13 +12,13 @@
 
 ### 제출 일자
 
-2024년 1월 15일 04:17:32
+2024년 1월 15일 04:43:27
 
 ### 문제 설명
 
 <p>고양이 랑이와 메리는 오목 게임의 변형인 냥목 게임을 하고 있다. 냥목 게임의 규칙은 복잡하니 점수 계산 방법만 보자.</p>
 
-<p style="text-align: center;"><img alt="" src="" style="width: 331px; height: 300px;"></p>
+<p style="text-align: center;"><img alt="" src="https://upload.acmicpc.net/8812c64a-b9d4-418b-9e9b-0fa1c6e15c69/-/preview/" style="width: 331px; height: 300px;"></p>
 
 <p>냥목 게임은 위 그림과 같은 <mjx-container class="MathJax" jax="CHTML" style="font-size: 109%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D441 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-cD7"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="3"><mjx-c class="mjx-c1D441 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>N</mi><mo>×</mo><mi>N</mi></math></mjx-assistive-mml><span aria-hidden="true" class="no-mathjax mjx-copytext">$N \times N$</span></mjx-container> 크기의 바둑판에서 흑돌과 백돌을 이용해 진행된다.</p>
 

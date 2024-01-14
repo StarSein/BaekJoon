@@ -43,8 +43,8 @@ public class Main {
             if (d % 2 == 0) {
                 continue;
             }
-            startY -= py[d] + qy[d];
-            startX -= px[d] + qx[d];
+            startY += -py[d] + qy[d];
+            startX += -px[d] + qx[d];
             for (int i = 1; i < N; i++) {
                 fillLineOfComboCount(startY, startX, d);
                 startY += qy[d];
@@ -54,7 +54,7 @@ public class Main {
 
         // 모든 누적합 배열을 순회하면서 최대 점수를 갱신한다 - 백돌을 흑돌로 바꿔치기 하지 않은 상황을 반영함
         int answer = 0;
-        for (int d = 0; d < 8; d++) {
+        for (int d = 0; d < 4; d++) {
             int[][] matrix = comboCount[d];
             for (int y = 1; y <= N; y++) {
                 for (int x = 1; x <= N; x++) {
@@ -62,7 +62,7 @@ public class Main {
                 }
             }
         }
-        
+
         // 모든 백돌을 순회하면서 최대 점수를 갱신한다 - 백돌을 흑돌로 바꿔치기 한 상황을 반영함
         for (int y = 1; y <= N; y++) {
             for (int x = 1; x <= N; x++) {
