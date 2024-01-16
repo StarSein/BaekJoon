@@ -1,45 +1,56 @@
 import java.io.*;
 import java.util.*;
-import java.util.stream.IntStream;
 
 
 public class Main {
 
     static int[] heights;
+    static boolean[] isFake;
 
     public static void main(String[] args) throws Exception {
-        // 입력 받고 오름차순 정렬하기
+        // 입력을 받는다
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        heights = IntStream.generate(() -> {
-                    try {
-                        return Integer.parseInt(br.readLine());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .limit(9)
-                .sorted()
-                .toArray();
-
-        // 아홉 난쟁이 키의 합 구해놓기
-        int heightSum = IntStream.of(heights).sum();
-
-        // 일곱 난쟁이에 포함시키지 않을 난쟁이 2명을 뽑는 9C2 가지 경우의 수에 대해 완전 탐색
-        for (int i = 1; i < heights.length; i++) {
-            heightSum -= heights[i];
-            for (int j = 0; j < i; j++) {
-                if (heightSum - heights[j] == 100) {
-                    final int I = i;
-                    final int J = j;
-
-                    Arrays.stream(heights)
-                            .filter(e -> e != heights[I] && e != heights[J])
-                            .forEach(System.out::println);
-
-                    return;
-                }
-            }
-            heightSum += heights[i];
+        heights = new int[9];
+        for (int i = 0; i < 9; i++) {
+            heights[i] = Integer.parseInt(br.readLine());
         }
+
+        // 난쟁이들 키를 오름차순으로 정렬한다
+        Arrays.sort(heights);
+
+        // 난쟁이들 키의 총합을 구한다
+        int sum = 0;
+        for (int height : heights) {
+            sum += height;
+        }
+
+        // 두 난쟁이의 키의 합이 (총합 - 100)이 되는 경우의 인덱스를 체크한다
+        isFake = new boolean[9];
+        int target = sum - 100;
+        int s = 0;
+        int e = 8;
+        while (s < e) {
+            int twoSum = heights[s] + heights[e];
+            if (twoSum == target) {
+                isFake[s] = true;
+                isFake[e] = true;
+                break;
+            } else if (twoSum > target) {
+                e--;
+            } else {
+                s++;
+            }
+        }
+
+        // 체크되지 않은 인덱스의 난쟁이 키만 출력한다
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 9; i++) {
+            if (isFake[i]) {
+                continue;
+            }
+            sb.append(heights[i]).append('\n');
+        }
+
+        System.out.print(sb);
     }
 }
