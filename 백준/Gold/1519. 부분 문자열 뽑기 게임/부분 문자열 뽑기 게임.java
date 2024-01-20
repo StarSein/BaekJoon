@@ -6,7 +6,7 @@ import java.util.*;
 public class Main {
 
     static int N;
-    static int[][] winner, count;
+    static int[][] winner;
 
     public static void main(String[] args) throws Exception {
         // 입력을 받는다
@@ -19,7 +19,6 @@ public class Main {
         // 처음 주어진 수에서 가장 작은 수부터 M이라 두고, M을 빼 보면서
         // 무조건 이길 수 있는 경우라면 M을 출력하고 프로그램을 종료한다
         winner = new int[3][N + 1];
-        count = new int[3][N + 1];
         for (int M : properSubsequences) {
             if (getWinner(2, N - M) == 1) {
                 System.out.println(M);
@@ -29,14 +28,6 @@ public class Main {
 
         // 절대 이길 수 없으면 -1을 출력한다
         System.out.println(-1);
-
-        for (int i = 1; i <= 2; i++) {
-            for (int j = 1; j <= N; j++) {
-                if (count[i][j] > 1) {
-                    System.out.println(i + " " + j + " " + count[i][j]);
-                }
-            }
-        }
     }
 
     // n의 진부분문자열로 만들 수 있는 양의 정수의 리스트를 반환한다
@@ -81,7 +72,7 @@ public class Main {
         if (winner[player][n] != 0) {
             return winner[player][n];
         }
-        count[player][n]++;
+        
         if (n < 10) {
             return winner[player][n] = 3 - player;
         }
