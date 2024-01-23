@@ -26,25 +26,17 @@ public class Main {
         int answer = INF;
         for (int i = 0; i < N; i++) {
             int minD12 = INF;
-            int bestJ1 = -1;
+            int minD23 = INF;
             for (int j = 0; j < N; j++) {
                 if (j == i) {
                     continue;
                 }
-                int curD12 = Math.abs(x[i] - x[j]) + Math.abs(y[i] - y[j]) + Math.abs(z[i] - z[j]);
-                if (curD12 < minD12) {
-                    minD12 = curD12;
-                    bestJ1 = j;
-                }
-            }
-            int minD23 = INF;
-            for (int j = 0; j < N; j++) {
-                if (j == i || j == bestJ1) {
-                    continue;
-                }
-                int curD23 = Math.abs(x[i] - x[j]) + Math.abs(y[i] - y[j]) + Math.abs(z[i] - z[j]);
-                if (curD23 < minD23) {
-                    minD23 = curD23;
+                int d = Math.abs(x[i] - x[j]) + Math.abs(y[i] - y[j]) + Math.abs(z[i] - z[j]);
+                if (d <= minD12) {
+                    minD23 = minD12;
+                    minD12 = d;
+                } else if (d < minD23) {
+                    minD23 = d;
                 }
             }
             answer = Math.min(answer, minD12 + minD23);
