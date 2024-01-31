@@ -24,10 +24,12 @@ public class Main {
         }
 
         int numCase = 0;
+        int diag1Idx;
+        int diag2Idx;
         for (int colIdx = 0; colIdx < N; colIdx++) {
-            int diag1Idx = getDiag1Idx(rowIdx, colIdx);
-            int diag2Idx = getDiag2Idx(rowIdx, colIdx);
-            if (colCheck[colIdx] || diag1Check[diag1Idx] || diag2Check[diag2Idx]) {
+            if (colCheck[colIdx]
+                    || diag1Check[diag1Idx = getDiag1Idx(rowIdx, colIdx)]
+                    || diag2Check[diag2Idx = getDiag2Idx(rowIdx, colIdx)]) {
                 continue;
             }
 
