@@ -1,88 +1,84 @@
-// 메모이제이션을 적용한 백트래킹의 시간 복잡도는 O(D^3 * N) (D는 N의 자릿수) 이다
-
-
+import java.io.*;
 import java.util.*;
+
 
 public class Main {
 
     static int N;
-    static int[][] winner;
+    static boolean[] dp, checked;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         // 입력을 받는다
         N = new Scanner(System.in).nextInt();
 
-        // 진 부분 문자열을 모두 구하고 정수로 변환 후, 크기의 오름차순으로 정렬한다
-        ArrayList<Integer> properSubsequences = getProperSubsequences(N);
-        properSubsequences.sort(Comparator.naturalOrder());
-
-        // 처음 주어진 수에서 가장 작은 수부터 M이라 두고, M을 빼 보면서
-        // 무조건 이길 수 있는 경우라면 M을 출력하고 프로그램을 종료한다
-        winner = new int[3][N + 1];
-        for (int M : properSubsequences) {
-            if (getWinner(2, N - M) == 1) {
-                System.out.println(M);
+        // 처음 주어진 수에서 만들 수 있는 진 부분 문자열들 중에서 작은 것부터 골라보면서
+        dp = new boolean[N + 1];
+        checked = new boolean[N + 1];
+        ArrayList<Integer> properSubstrings = getProperSubstringList(N);
+        properSubstrings.sort(Comparator.naturalOrder());
+        for (int properSubstring : properSubstrings) {
+            // 무조건 이길 수 있는 것을 발견한다면 그것을 출력하고 프로그램을 종료한다
+            if (!win(N - properSubstring)) {
+                System.out.println(properSubstring);
                 return;
             }
         }
 
-        // 절대 이길 수 없으면 -1을 출력한다
+        // 발견하지 못했다면 -1을 출력한다
         System.out.println(-1);
     }
 
-    // n의 진부분문자열로 만들 수 있는 양의 정수의 리스트를 반환한다
-    static ArrayList<Integer> getProperSubsequences(int n) {
-        ArrayList<Integer> properSubsequences = new ArrayList<>();
+    static ArrayList<Integer> getProperSubstringList(int n) {
+        ArrayList<Integer> ret = new ArrayList<>();
 
-        int digitCount = getDigitCount(n);
-        for (int i = 0; i < digitCount; i++) {
-            for (int j = i; j < digitCount; j++) {
+        int numDigit = getNumDigit(n);
+        // 진 부분 문자열을 뒤에서 i번째 숫자부터 j번째 숫자까지 사용하여 만든다고 할 때
+        // 0과 n이 아닌 것만 리스트에 포함시킨다
+        for (int i = 0; i < numDigit; i++) {
+            for (int j = i; j < numDigit; j++) {
                 int temp = n;
                 for (int k = 0; k < i; k++) {
                     temp /= 10;
                 }
-                int num = 0;
+                int substr = 0;
                 int pow = 1;
                 for (int k = i; k <= j; k++) {
-                    num += (temp % 10) * pow;
+                    substr += (temp % 10) * pow;
                     temp /= 10;
                     pow *= 10;
                 }
-                if (num == 0 || num == n) {
+                if (substr == 0 || substr == n) {
                     continue;
                 }
-                properSubsequences.add(num);
+                ret.add(substr);
             }
         }
 
-        return properSubsequences;
+        return ret;
     }
 
-    static int getDigitCount(int n) {
-        int digitCount = 0;
+    static int getNumDigit(int n) {
+        int count = 0;
         while (n > 0) {
-            digitCount++;
+            count++;
             n /= 10;
         }
-        return digitCount;
+        return count;
     }
 
-    // player(1 or 2)에게 N이 주어졌을 때 이기는 선수의 번호를 반환한다
-    static int getWinner(int player, int n) {
-        if (winner[player][n] != 0) {
-            return winner[player][n];
-        }
-        
+    static boolean win(int n) {
         if (n < 10) {
-            return winner[player][n] = 3 - player;
+            return false;
         }
-
-        ArrayList<Integer> properSubsequences = getProperSubsequences(n);
-        for (int m : properSubsequences) {
-            if (getWinner(3 - player, n - m) == player) {
-                return winner[player][n] = player;
+        if (checked[n]) {
+            return dp[n];
+        }
+        for (int properSubstring : getProperSubstringList(n)) {
+            if (!win(n - properSubstring)) {
+                return dp[n] = checked[n] = true;
             }
         }
-        return winner[player][n] = 3 - player;
+        checked[n] = true;
+        return dp[n] = false;
     }
 }
