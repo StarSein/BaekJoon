@@ -13,10 +13,10 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         b = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
 
-        // (1, 1) ~ (500, 500) 에 대해 첫 턴에 시작하는 사람의 승리 여부를 저장해 놓는다
         dp = new boolean[501][501];
+        // dp[i][j]: 카드 덱 상황이 (i, j)일 때 첫 턴인 플레이어가 승리하는지 여부
         checked = new boolean[501][501];
-        win(500, 500);
+        // checked[i][j]: dp[i][j]가 계산 및 할당 되었는지 여부
 
         // 입력이 주어질 때마다 승자를 정답 문자열에 추가한다
         StringBuilder sb = new StringBuilder();
