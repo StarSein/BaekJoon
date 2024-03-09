@@ -1,37 +1,48 @@
+/*
+섞기 수열이 [3, 2, 5, 6, 1, 4] 라는 것은
+섞기를 했을 때 3번째 위치의 카드가 1번 위치로 온다는 것과 같다
+이를 next[3] = 1 과 같이 나타내자.
+그래프의 관점에서 모든 노드는 사이클의 일부이다.
+정답은 모든 사이클의 크기의 최소공배수다.
+ */
+
 import java.io.*;
 import java.util.*;
-import java.util.stream.IntStream;
+
 
 public class Main {
+
     static int N;
-    static int[] arr;
-    static boolean[] visit, cntCheck;
+    static int[] next;
+    static boolean[] visited;
 
     public static void main(String[] args) throws Exception {
+        // 입력을 받는다
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        arr = new int[N + 1];
+        next = new int[N + 1];
         StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 1; i <= N; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
+            int pos = Integer.parseInt(st.nextToken());
+            next[pos] = i;
         }
 
-        cntCheck = new boolean[N + 1];
-        visit = new boolean[N + 1];
+        // 모든 사이클의 크기를 구해 정답과 최소공배수 처리를 한다
+        visited = new boolean[N + 1];
+        int answer = 1;
         for (int i = 1; i <= N; i++) {
-            int cur = i;
-            int visitCnt = 0;
-            while (!visit[cur]) {
-                visit[cur] = true;
-                visitCnt++;
-                cur = arr[cur];
+            if (visited[i]) {
+                continue;
             }
-            cntCheck[visitCnt] = true;
+            answer = lcm(answer, dfs(i));
         }
-        int answer = IntStream.rangeClosed(1, N)
-                .filter(e -> cntCheck[e])
-                .reduce(1, (a, b) -> lcm(a, b));
+
+        // 정답을 출력한다
         System.out.println(answer);
+    }
+
+    static int lcm(int a, int b) {
+        return a / gcd(a, b) * b;
     }
 
     static int gcd(int a, int b) {
@@ -43,7 +54,11 @@ public class Main {
         return a;
     }
 
-    static int lcm(int a, int b) {
-        return (int) ((long) a * b / gcd(a, b));
+    static int dfs(int cur) {
+        if (visited[cur]) {
+            return 0;
+        }
+        visited[cur] = true;
+        return 1 + dfs(next[cur]);
     }
 }
