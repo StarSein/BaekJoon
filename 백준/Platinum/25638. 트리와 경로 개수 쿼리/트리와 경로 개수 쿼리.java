@@ -1,28 +1,36 @@
+/*
+1) (u의 서브트리인 빨강 개수) * (u의 서브트리가 아닌 파랑 개수)
+2) (u의 서브트리인 파랑 개수) * (u의 서브트리가 아닌 빨강 개수)
+3) (u의 서브트리인 빨강 개수) * (u의 서브트리인 파랑 개수)
+쿼리로 들어온 u에 대한 응답값은 위 세 가지 값의 합이다
+
+1, 2의 경우 배열에 저장된 값을 이용해 O(1)에 계산한다
+3의 경우 u의 임의의 자식 노드를 c라고 할 때,
+((u의 서브트리인 빨강 개수) - (c의 서브트리인 빨강 개수)) * (c의 서브트리인 파랑 개수)
+((u의 서브트리인 파랑 개수) - (c의 서브트리인 파랑 개수)) * (c의 서브트리인 빨강 개수)
+와 같은 방식으로 모든 자식 노드 c에 대해 계산을 한다
+ */
+
+
 import java.io.*;
 import java.util.*;
 
 
 public class Main {
-    
-    static int N;
-    static int Q;
-    static long totalRedCount;
-    static long totalBlueCount;
-    static boolean[] isReds;
+
+    static int N, Q, totalRed, totalBlue;
+    static int[] a, subtreeRed, subtreeBlue;
     static ArrayList<Integer>[] graph;
-    static ArrayList<Integer>[] tree;
-    static long[] subTreeRedCounts;
-    static long[] subTreeBlueCounts;
-    static long[] results;
-    
+    static long[] response;
+
     public static void main(String[] args) throws Exception {
-        // 입력 받아서 그래프 만들기
+        // 입력을 받는다
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        isReds = new boolean[N + 1];
+        a = new int[N + 1];
         StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 1; i <= N; i++) {
-            isReds[i] = "1".equals(st.nextToken());
+            a[i] = Integer.parseInt(st.nextToken());
         }
         graph = new ArrayList[N + 1];
         for (int i = 1; i <= N; i++) {
@@ -36,75 +44,81 @@ public class Main {
             graph[v].add(u);
         }
 
-        // 트리 만들기
-        tree = new ArrayList[N + 1];
-        for (int i = 1; i <= N; i++) {
-            tree[i] = new ArrayList<>();
-        }
-        makeTree(1, 0);
-
-        // dfs 하며 노드별 (서브트리 빨강, 서브트리 파랑) 개수 세기
-        subTreeRedCounts = new long[N + 1];
-        subTreeBlueCounts = new long[N + 1];
-        countRedBlue(1);
-        
-        totalRedCount = subTreeRedCounts[1];
-        totalBlueCount = subTreeBlueCounts[1];
-
-        // 모든 노드에 대해 결과값 미리 계산
-        results = new long[N + 1];
-        for (int i = 1; i <= N; i++) {
-            long nonSubTreeRedCount = totalRedCount - subTreeRedCounts[i];
-            long nonSubTreeBlueCount = totalBlueCount - subTreeBlueCounts[i];
-
-            long result = 0L;
-            for (int child : tree[i]) {
-                // 자식 노드의 서브 트리 빨강 * 자식 노드의 비 서브 트리 파랑
-                result += subTreeRedCounts[child] * nonSubTreeBlueCount;
-                // 자식 노드의 서브 트리 파랑 * 자식 노드의 비 서브 트리 빨강
-                result += subTreeBlueCounts[child] * nonSubTreeRedCount;
-
-                nonSubTreeRedCount += subTreeRedCounts[child];
-                nonSubTreeBlueCount += subTreeBlueCounts[child];
+        // 전체 트리에서 빨강과 파랑의 개수를 센다
+        for (int color : a) {
+            if (color == 1) {
+                totalRed++;
             }
-
-            results[i] = result;
         }
+        totalBlue = N - totalRed;
 
-        // 쿼리로 주어지는 노드에 대해
-        Q = Integer.parseInt(br.readLine());
+        // 각 노드마다 해당 노드가 루트인 서브트리에서 빨강과 파랑의 개수를 센다
+        subtreeRed = new int[N + 1]; // subtreeRed[x]: x가 루트인 서브트리에서 빨강의 개수
+        subtreeBlue = new int[N + 1]; // subtreeBlue[x]: x가 루트인 서브트리에서 파랑의 개수
+        calcSubTree(1, 0);
+
+        // 각 노드마다 해당 노드가 쿼리로 주어졌을 때 응답값을 미리 저장해 놓는다
+        response = new long[N + 1]; // response[x]: 쿼리 x에 대한 응답값
+        calcResponse(1, 0);
+
+        // 쿼리를 입력받을 때마다 응답값을 정답 문자열에 추가한다
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < Q; i++) {
+        Q = Integer.parseInt(br.readLine());
+        while (Q-- > 0) {
             int u = Integer.parseInt(br.readLine());
-            // 결과값 문자열에 추가
-            sb.append(results[u]).append('\n');
+            sb.append(response[u]).append('\n');
         }
-        System.out.println(sb);
+
+        // 정답 문자열을 출력한다
+        System.out.print(sb);
     }
 
-    static void makeTree(int cur, int par) {
-        for (int nex : graph[cur]) {
-            if (nex == par) {
+    static void calcSubTree(int cur, int prev) {
+        if (a[cur] == 1) {
+            subtreeRed[cur] = 1;
+        } else {
+            subtreeBlue[cur] = 1;
+        }
+
+        for (int next : graph[cur]) {
+            if (next == prev) {
                 continue;
             }
-            tree[cur].add(nex);
 
-            makeTree(nex, cur);
+            calcSubTree(next, cur);
+
+            subtreeRed[cur] += subtreeRed[next];
+            subtreeBlue[cur] += subtreeBlue[next];
         }
     }
-    
-    static void countRedBlue(int cur) {
-        if (isReds[cur]) {
-            subTreeRedCounts[cur] = 1;
+
+    static void calcResponse(int cur, int prev) {
+        long subBlue = subtreeBlue[cur];
+        long subRed = subtreeRed[cur];
+        long nonSubBlue = totalBlue - subBlue;
+        long nonSubRed = totalRed - subRed;
+        if (a[cur] == 1) {
+            subRed--;
         } else {
-            subTreeBlueCounts[cur] = 1;
+            subBlue--;
         }
 
-        for (int nex : tree[cur]) {
-            countRedBlue(nex);
+        // 1, 2의 경우를 계산한다
+        response[cur] = subBlue * nonSubRed
+                + subRed * nonSubBlue;
 
-            subTreeRedCounts[cur] += subTreeRedCounts[nex];
-            subTreeBlueCounts[cur] += subTreeBlueCounts[nex];
+        // 3의 경우를 계산한다
+        long temp = 0L;
+        for (int next : graph[cur]) {
+            if (next == prev) {
+                continue;
+            }
+
+            calcResponse(next, cur);
+
+            temp += subtreeRed[next] * (subBlue - subtreeBlue[next])
+                    + subtreeBlue[next] * (subRed - subtreeRed[next]);
         }
+        response[cur] += (temp / 2L);
     }
 }
