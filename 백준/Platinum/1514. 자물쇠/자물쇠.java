@@ -2,41 +2,25 @@ import java.io.*;
 import java.util.*;
 
 /*
-1. x번째 디스크에 대해 {x}, {x, x+1}, {x, x+1, x+2} 중 돌릴 디스크의 집합을 결정한다고 하자
-   그러면 디스크 하나당 선택 가능한 경우의 수는 19^3 개다
-   단, 해당 시점에 x번째 디스크는 반드시 비밀번호와 일치해야 하므로 19^2 개의 경우의 수가 있다
-2. 위 세 개의 디스크의 번호 변화분을 (a, b, c)라고 할 때 모든 가능한 (a, b, c)에 대해
-   최소 비용을 구해 놓자
-3. dp[i][j][k]: i번째 디스크를 비밀번호와 일치시키고
-                i+1번째 디스크 번호를 j, i+2번째 디스크 번호를 k로 만드는 최소 비용
-4. 시간 복잡도는 O(NT) (T = 10^2 * 19^2)
+Top-down DP 로도 해결해보자
+dp[i][j][k]: i번째 디스크의 번호를 비밀 번호와 일치시킬 차례이고, i번째 디스크에 j, i+1번째 디스크에 k만큼의 변화분이 있을 때
+             디스크 전체를 비밀번호 전체와 일치시키기 위한 최소 횟수
  */
 
 public class Main {
 
-    static class Tuple {
-        int a, b, c;
-
-        Tuple(int a, int b, int c) {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-        }
-    }
-    static final int AXIS = 9;
-    static final int SIZE = 2 * AXIS + 1;
+    static final int INF = 1_000_000_000;
     static int N;
     static int[] cur, pwd;
-    static int[][][] dp;
-    static int[][][] cost = new int[SIZE][SIZE][SIZE];
-    static ArrayDeque<Tuple> dq = new ArrayDeque<>();
+    static int[][][] dp, cost;
+    static ArrayDeque<int[]> dq = new ArrayDeque<>();
 
     public static void main(String[] args) throws Exception {
         // 입력을 받는다
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        cur = new int[N + 2];
-        pwd = new int[N + 2];
+        cur = new int[N + 3];
+        pwd = new int[N + 3];
         char[] curLine = br.readLine().toCharArray();
         char[] pwdLine = br.readLine().toCharArray();
         for (int i = 0; i < N; i++) {
@@ -44,101 +28,74 @@ public class Main {
             pwd[i] = pwdLine[i] - '0';
         }
 
-        // 연속한 3개의 디스크 번호의 변화분으로 가능한 모든 경우의 수에 대해 최소 비용을 구한다
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                for (int k = 0; k < SIZE; k++) {
+        dp = new int[N][10][10];
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < 10; j++) {
+                for (int k = 0; k < 10; k++) {
+                    dp[i][j][k] = -1;
+                }
+            }
+        }
+
+        // 변화분의 모든 순서쌍에 대한 최소 비용을 구해 놓는다
+        cost = new int[10][10][10];
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                for (int k = 0; k < 10; k++) {
                     cost[i][j][k] = -1;
                 }
             }
         }
-        cost[AXIS][AXIS][AXIS] = 0;
-
-        dq.offerLast(new Tuple(0, 0, 0));
-        int rotateCount = 0;
+        cost[0][0][0] = 0;
+        dq.offer(new int[] {0, 0, 0});
+        int count = 0;
         while (!dq.isEmpty()) {
-            rotateCount++;
+            count++;
             int size = dq.size();
             while (size-- > 0) {
-                Tuple e = dq.pollFirst();
+                int[] cur = dq.pollFirst();
 
                 for (int d = -3; d <= 3; d++) {
                     if (d == 0) {
                         continue;
                     }
-                    int na = (e.a + d) % 10;
-                    int nb = (e.b + d) % 10;
-                    int nc = (e.c + d) % 10;
-
-                    checkAndVisit(na, e.b, e.c, rotateCount);
-                    checkAndVisit(na, nb, e.c, rotateCount);
-                    checkAndVisit(na, nb, nc, rotateCount);
-                    checkAndVisit(e.a, nb, e.c, rotateCount);
-                    checkAndVisit(e.a, e.b, nc, rotateCount);
-                    checkAndVisit(e.a, nb, nc, rotateCount);
+                    checkAndVisit(new int[] {cur[0] + d, cur[1], cur[2]}, count);
+                    checkAndVisit(new int[] {cur[0] + d, cur[1] + d, cur[2]}, count);
+                    checkAndVisit(new int[] {cur[0] + d, cur[1] + d, cur[2] + d}, count);
+                    checkAndVisit(new int[] {cur[0], cur[1] + d, cur[2]}, count);
+                    checkAndVisit(new int[] {cur[0], cur[1] + d, cur[2] + d}, count);
+                    checkAndVisit(new int[] {cur[0], cur[1], cur[2] + d}, count);
                 }
             }
         }
 
-        // dp[0] 을 따로 구해 놓는다
-        dp = new int[N][10][10];
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < 10; j++) {
-                for (int k = 0; k < 10; k++) {
-                    dp[i][j][k] = Integer.MAX_VALUE;
-                }
-            }
-        }
-
-        for (int da = -9; da <= 9; da++) {
-            int na = (cur[0] + da + 10) % 10;
-            if (na != pwd[0]) {
-                continue;
-            }
-            for (int db = -9; db <= 9; db++) {
-                int nb = (cur[1] + db + 10) % 10;
-                for (int dc = -9; dc <= 9; dc++) {
-                    int nc = (cur[2] + dc + 10) % 10;
-                    dp[0][nb][nc] = Math.min(dp[0][nb][nc], cost[da + AXIS][db + AXIS][dc + AXIS]);
-                }
-            }
-        }
-
-        // dp 점화식을 전개한다
-        for (int i = 0; i < N - 1; i++) {
-            for (int j = 0; j < 10; j++) {
-                for (int da = -9; da <= 9; da++) {
-                    int na = (j + da + 10) % 10;
-                    if (na != pwd[i + 1]) {
-                        continue;
-                    }
-                    for (int k = 0; k < 10; k++) {
-                        for (int db = -9; db <= 9; db++) {
-                            int nb = (k + db + 10) % 10;
-                            for (int dc = -9; dc <= 9; dc++) {
-                                int nc = (cur[i + 3] + dc + 10) % 10;
-                                dp[i + 1][nb][nc] = Math.min(dp[i + 1][nb][nc], dp[i][j][k] + cost[da + AXIS][db + AXIS][dc + AXIS]);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // dp[N-1] 의 최솟값을 출력한다
-        int answer = Integer.MAX_VALUE;
-        for (int j = 0; j < 10; j++) {
-            for (int k = 0; k < 10; k++) {
-                answer = Math.min(answer, dp[N - 1][j][k]);
-            }
-        }
-        System.out.println(answer);
+        System.out.println(getDP(0, 0, 0));
     }
 
-    static void checkAndVisit(int a, int b, int c, int rotateCount) {
-        if (cost[a + AXIS][b + AXIS][c + AXIS] == -1) {
-            dq.offerLast(new Tuple(a, b, c));
-            cost[a + AXIS][b + AXIS][c + AXIS] = rotateCount;
+    static void checkAndVisit(int[] arr, int count) {
+        int a = (arr[0] + 10) % 10;
+        int b = (arr[1] + 10) % 10;
+        int c = (arr[2] + 10) % 10;
+        if (cost[a][b][c] == -1) {
+            dq.offerLast(new int[] {a, b, c});
+            cost[a][b][c] = count;
         }
+    }
+
+    static int getDP(int i, int j, int k) {
+        if (i == N) {
+            return 0;
+        }
+        if (dp[i][j][k] != -1) {
+            return dp[i][j][k];
+        }
+        int ret = INF;
+        int a = (pwd[i] - (cur[i] + j) % 10 + 10) % 10;
+        for (int b = 0; b < 10; b++) {
+            for (int c = 0; c < 10; c++) {
+                ret = Math.min(ret, cost[a][b][c] + getDP(i + 1, (b + k) % 10, c));
+            }
+        }
+        return dp[i][j][k] = ret;
     }
 }
