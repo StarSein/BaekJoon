@@ -23,12 +23,12 @@ int main() {
         lastWrittens[line] = i;
     }
 
-    for (auto iter = frequencies.begin(); iter != frequencies.end(); iter++) {
-        string line = iter->first;
+    for (auto& iter : frequencies) {
+        string line = iter.first;
         lines.emplace_back(line);
     }
 
-    sort(lines.begin(), lines.end(), [](string a, string b) {
+    sort(lines.begin(), lines.end(), [](string& a, string& b) {
         if (frequencies[a] == frequencies[b]) return lastWrittens[a] > lastWrittens[b];
         return frequencies[a] > frequencies[b];
     });
